@@ -4,17 +4,57 @@
  */
 package com.ClassesAndFrames;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author LL
  */
-public class AllPacksFrame extends javax.swing.JFrame {
+public final class AllPacksFrame extends javax.swing.JFrame {
+    DefaultTableModel model;
+    String id;
+    String comment;
+    String querry;
+    
+public void currentDate() {
+        GregorianCalendar cal = new GregorianCalendar();
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int year = cal.get(Calendar.YEAR);
+        date.setText(day + "/" + (month + 1) + "/" + year);
 
-    /**
-     * Creates new form AllPacksFrame
-     */
+    }
+public void comment() throws ClassNotFoundException, SQLException{
+    
+try{
+Class.forName("org.h2.Driver");
+             Connection conn = DriverManager.getConnection("jdbc:h2:./DB/my;IFEXISTS=TRUE", "root", "password");
+            model = (DefaultTableModel) AllPacksTable.getModel();
+            int row = AllPacksTable.getSelectedRow();
+           id = (AllPacksTable.getModel().getValueAt(row, 1).toString());
+            comment= (AllPacksTable.getModel().getValueAt(row, 5).toString());
+            querry ="insert into comments values (?,?,CURRENT_DATE)";
+            PreparedStatement pst = conn.prepareStatement(querry);
+            pst.setString(1,id);
+            pst.setString(2,comment);
+            pst.executeUpdate();
+}catch(Exception e){
+JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );}
+}
+    
     public AllPacksFrame() {
         initComponents();
+        currentDate();
     }
 
     /**
@@ -28,33 +68,58 @@ public class AllPacksFrame extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jTextField1 = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        date1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        AllPacksTable = new javax.swing.JTable();
+        coment = new javax.swing.JButton();
+        saveAs = new javax.swing.JButton();
+        delete = new javax.swing.JButton();
+        refreshInfo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextField1.setText("jTextField1");
+        jPanel1.setBackground(new java.awt.Color(0, 51, 51));
+
+        jTextField1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+
+        jLabel2.setBackground(new java.awt.Color(0, 102, 102));
+        jLabel2.setFont(new java.awt.Font("Dialog", 2, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(204, 255, 204));
+        jLabel2.setText("Търсене:");
+
+        date1.setBackground(new java.awt.Color(0, 102, 102));
+        date1.setFont(new java.awt.Font("Dialog", 3, 18)); // NOI18N
+        date1.setForeground(new java.awt.Color(204, 255, 204));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(date1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(368, 368, 368)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 41, Short.MAX_VALUE)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 15, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(date1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         jPanel2.setForeground(new java.awt.Color(51, 51, 51));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        AllPacksTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -65,7 +130,46 @@ public class AllPacksFrame extends javax.swing.JFrame {
                 "Складова Разписка", "Опаковка", "Статус", "Местоположение", "Дата", "Коментар"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(AllPacksTable);
+
+        coment.setFont(new java.awt.Font("Arial Black", 1, 14)); // NOI18N
+        coment.setText("Добави Коментар");
+        coment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comentActionPerformed(evt);
+            }
+        });
+
+        saveAs.setFont(new java.awt.Font("Arial Black", 1, 14)); // NOI18N
+        saveAs.setText(".XLS");
+        saveAs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAsActionPerformed(evt);
+            }
+        });
+
+        delete.setFont(new java.awt.Font("Arial Black", 1, 14)); // NOI18N
+        delete.setText("Изтрий");
+        delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteActionPerformed(evt);
+            }
+        });
+        delete.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                deleteKeyReleased(evt);
+            }
+        });
+
+        refreshInfo.setFont(new java.awt.Font("Arial Black", 1, 14)); // NOI18N
+        refreshInfo.setText("Обнови");
+        refreshInfo.setIconTextGap(0);
+        refreshInfo.setPreferredSize(new java.awt.Dimension(40, 42));
+        refreshInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshInfoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -73,15 +177,31 @@ public class AllPacksFrame extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -99,14 +219,70 @@ public class AllPacksFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    public ArrayList<AllPacksClass> Opakovki(){
+    ArrayList<AllPacksClass>
+    }
+    private void comentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comentActionPerformed
+        
+        try {
+            comment();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );
+        }
+
+    }//GEN-LAST:event_comentActionPerformed
+
+    private void saveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsActionPerformed
+
+        try {
+            export.export(AllFrameTable);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }//GEN-LAST:event_saveAsActionPerformed
+
+    private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
+
+        try {
+            //Class.forName("com.mysql.jdbc.Driver");
+            // Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/demo", "root", "admin123");
+            //Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+            //Connection conn = DriverManager.getConnection("jdbc:derby:D:\\Projects\\data");
+            Class.forName("org.h2.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:h2:./DB/my;IFEXISTS=TRUE", "root", "password");
+
+            int row = AllFrameTable.getSelectedRow();
+            String value = (AllFrameTable.getModel().getValueAt(row, 1).toString());
+            String query1 = "DELETE FROM OPAKOVKI2 where IDopakovka='" + value + "'";
+            PreparedStatement pst = conn.prepareStatement(query1);
+            pst.executeUpdate();
+            DefaultTableModel model = (DefaultTableModel) AllFrameTable.getModel();
+            model.setRowCount(0);
+            show_id();
+            JOptionPane.showMessageDialog(null, "Изтрихте " + value);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }//GEN-LAST:event_deleteActionPerformed
+
+    private void deleteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_deleteKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_deleteKeyReleased
+
+    private void refreshInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshInfoActionPerformed
+        refreshInfo();        // TODO add your handling code here:
+    }//GEN-LAST:event_refreshInfoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -144,10 +320,20 @@ public class AllPacksFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable AllPacksTable;
+    private javax.swing.JButton coment;
+    private javax.swing.JLabel date;
+    private javax.swing.JLabel date1;
+    private javax.swing.JButton delete;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton refreshInfo;
+    private javax.swing.JButton saveAs;
+    private javax.swing.JTextField search;
     // End of variables declaration//GEN-END:variables
 }

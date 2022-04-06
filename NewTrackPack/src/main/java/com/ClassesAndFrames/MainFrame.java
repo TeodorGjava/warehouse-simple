@@ -19,9 +19,9 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author LL
+ * @author Teodor Georgiev
  */
-public class MainFrame extends javax.swing.JFrame {
+public final class MainFrame extends javax.swing.JFrame {
 String id;
 String status;
 AllPacksFrame frame1 = new AllPacksFrame();
@@ -91,7 +91,6 @@ AllPacksFrame frame1 = new AllPacksFrame();
             }else{
             String updatePack= "update OPAKOVKI set Status =?, Location = ?, datestamp = CURRENT_DATE, numWh = ?where IDopakovka ='" +id+ "'";
             PreparedStatement pstmt = conn.prepareStatement(updatePack);
-                String status = null;
                 if (yes.isSelected()) {
                     status = yes.getText();
                 }
@@ -124,7 +123,6 @@ AllPacksFrame frame1 = new AllPacksFrame();
      if(!packID.toString().contains(id)){
          String sql = "insert into opakovki values(?,?,?,?,?)";
      PreparedStatement pstmt = conn.prepareStatement(sql); 
-     String status = null;
           if (yes.isSelected()) {
               status = yes.getText();
           }
@@ -147,7 +145,6 @@ AllPacksFrame frame1 = new AllPacksFrame();
          if(yes.isSelected()){
          status = "Склад";}
          String checkStatus = "SELECT * FROM OPAKOVKI WHERE OPAKOVKI.Status='"+status+"'AND OPAKOVKI.IDopakovka='"+id+"'";
-         Statement checkStatusST = conn.createStatement();
             ResultSet showStatusRS = stm.executeQuery(checkStatus);
             StringBuilder tank = new StringBuilder();
             while(showStatusRS.next()){
@@ -159,7 +156,6 @@ AllPacksFrame frame1 = new AllPacksFrame();
             }else{
             String updatePack= "update OPAKOVKI set Status =?, Location = ?, datestamp = ?, numWh = ?where IDopakovka ='" +id+ "'";
             PreparedStatement pstmt = conn.prepareStatement(updatePack);
-                String status = null;
                 if (yes.isSelected()) {
                     status = yes.getText();
                 }

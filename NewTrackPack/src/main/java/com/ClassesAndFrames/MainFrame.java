@@ -4,14 +4,12 @@
  */
 package com.ClassesAndFrames;
 
-import java.util.List;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
@@ -153,6 +151,12 @@ AllPacksFrame frame1 = new AllPacksFrame();
             }
             if(tank.toString().contains(status)){
             JOptionPane.showMessageDialog(null, "Дублирана опаковка " + id+"!");
+            String querry = "insert into duplicate values(?,?)";
+            PreparedStatement pr = conn.prepareStatement(querry);
+            pr.setString(1, Id.getText());
+            pr.setString(2, "");
+            pr.executeUpdate();
+            conn.close();
             }else{
             String updatePack= "update OPAKOVKI set Status =?, Location = ?, datestamp = ?, numWh = ?where IDopakovka ='" +id+ "'";
             PreparedStatement pstmt = conn.prepareStatement(updatePack);

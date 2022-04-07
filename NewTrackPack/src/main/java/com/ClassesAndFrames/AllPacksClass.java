@@ -4,13 +4,18 @@
  */
 package com.ClassesAndFrames;
 
-/**
- *
- * @author LL
- */
+
 public class AllPacksClass {
     private String IDopakovka;
     private String Status;
+
+    public AllPacksClass(String IDopakovka, String Status, String Location, String datestamp, String numWh) {
+        this.IDopakovka = IDopakovka;
+        this.Status = Status;
+        this.Location = Location;
+        this.datestamp = datestamp;
+        this.numWh = numWh;
+    }
     private String Location;
     private String datestamp;
     private String numWh;

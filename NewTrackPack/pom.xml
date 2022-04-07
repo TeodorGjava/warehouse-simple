@@ -13,6 +13,22 @@
     <version>2.0.206</version>
     <scope>runtime</scope>
 </dependency>
+<dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-full</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.1.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     
     <properties>

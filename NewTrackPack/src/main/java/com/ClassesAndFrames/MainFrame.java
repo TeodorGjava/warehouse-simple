@@ -22,6 +22,20 @@ import javax.swing.JOptionPane;
 public final class MainFrame extends javax.swing.JFrame {
 String id;
 String status;
+public void insertProblemId() throws SQLException{
+    try{
+        Class.forName("org.h2.Driver");
+        try (Connection conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test")) {
+            String querry = "insert into new values(?,?,CURRENT_DATE)";
+            PreparedStatement pr = conn.prepareStatement(querry);
+            pr.setString(1, Id.getText());
+            pr.setString(2, "-");
+            pr.executeUpdate();
+            conn.close();
+        }
+    }catch(ClassNotFoundException | SQLException e ){
+        System.out.println(e);}
+}
 AllPacksFrame frame1 = new AllPacksFrame();
    public void currentDate() {
         GregorianCalendar cal = new GregorianCalendar();
@@ -41,8 +55,6 @@ AllPacksFrame frame1 = new AllPacksFrame();
      Class.forName("org.h2.Driver");
             Connection conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
      if(oldDate.getText().equals("")){
-    
-   
      String checkID = "SELECT * FROM OPAKOVKI\n" +
 "WHERE OPAKOVKI.IDopakovka ='"+id+"'";
             Statement stm = conn.createStatement();
@@ -55,7 +67,6 @@ AllPacksFrame frame1 = new AllPacksFrame();
      if(!packID.toString().contains(id)){
          String sql = "insert into opakovki values(?,?,?,CURRENT_DATE,?)";
      PreparedStatement pstmt = conn.prepareStatement(sql); 
-     String status = null;
           if (yes.isSelected()) {
               status = yes.getText();
           }
@@ -77,7 +88,6 @@ AllPacksFrame frame1 = new AllPacksFrame();
          if(yes.isSelected()){
          status = "Склад";}
          String checkStatus = "SELECT * FROM OPAKOVKI WHERE OPAKOVKI.Status='"+status+"'AND OPAKOVKI.IDopakovka='"+id+"'";
-         Statement checkStatusST = conn.createStatement();
             ResultSet showStatusRS = stm.executeQuery(checkStatus);
             StringBuilder tank = new StringBuilder();
             while(showStatusRS.next()){
@@ -85,6 +95,7 @@ AllPacksFrame frame1 = new AllPacksFrame();
             tank.append(problemStat);
             }
             if(tank.toString().contains(status)){
+                insertProblemId();
             JOptionPane.showMessageDialog(null, "Дублирана опаковка " + id+"!");
             }else{
             String updatePack= "update OPAKOVKI set Status =?, Location = ?, datestamp = CURRENT_DATE, numWh = ?where IDopakovka ='" +id+ "'";
@@ -95,7 +106,6 @@ AllPacksFrame frame1 = new AllPacksFrame();
                 if (no.isSelected()) {
                     status = no.getText();
                 }
-                
                 pstmt.setString(1, status);
                 pstmt.setString(2, location.getText());
                 pstmt.setString(3,numWh.getText()); 
@@ -104,8 +114,7 @@ AllPacksFrame frame1 = new AllPacksFrame();
 
                 conn.close();
                 JOptionPane.showMessageDialog(null, "Актуализирахте опаковка " + id+"!");
-            }
-         
+            }  
      }
      }
      else{
@@ -144,19 +153,16 @@ AllPacksFrame frame1 = new AllPacksFrame();
          status = "Склад";}
          String checkStatus = "SELECT * FROM OPAKOVKI WHERE OPAKOVKI.Status='"+status+"'AND OPAKOVKI.IDopakovka='"+id+"'";
             ResultSet showStatusRS = stm.executeQuery(checkStatus);
-            StringBuilder tank = new StringBuilder();
+            StringBuilder tank = new StringBuilder(); 
             while(showStatusRS.next()){
             String problemStat = showStatusRS.getString("Status");
             tank.append(problemStat);
             }
-            if(tank.toString().contains(status)){
-            JOptionPane.showMessageDialog(null, "Дублирана опаковка " + id+"!");
-            String querry = "insert into duplicate values(?,?)";
-            PreparedStatement pr = conn.prepareStatement(querry);
-            pr.setString(1, Id.getText());
-            pr.setString(2, "");
-            pr.executeUpdate();
             conn.close();
+            if(tank.toString().contains(status)){   
+            insertProblemId();
+            conn.close();
+            JOptionPane.showMessageDialog(null, "Дублиран запис!");
             }else{
             String updatePack= "update OPAKOVKI set Status =?, Location = ?, datestamp = ?, numWh = ?where IDopakovka ='" +id+ "'";
             PreparedStatement pstmt = conn.prepareStatement(updatePack);
@@ -166,7 +172,6 @@ AllPacksFrame frame1 = new AllPacksFrame();
                 if (no.isSelected()) {
                     status = no.getText();
                 }
-                
                 pstmt.setString(1, status);
                 pstmt.setString(2, location.getText());
                 pstmt.setString(3,oldDate.getText());
@@ -177,15 +182,9 @@ AllPacksFrame frame1 = new AllPacksFrame();
                 conn.close();
                 JOptionPane.showMessageDialog(null, "Актуализирахте опаковка " + id+"!");
             }
-         
      }
-     
      }
-     
-     
      }
-
-   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -498,16 +497,13 @@ AllPacksFrame frame1 = new AllPacksFrame();
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 frame1.setVisible(true);
-
-    
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-numWh.setText("");
+        numWh.setText("");
         oldDate.setText("");
         location.setText("");
         Id.setText("");    
-        
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed

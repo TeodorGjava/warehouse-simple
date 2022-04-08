@@ -40,7 +40,6 @@ public final class AllPacksFrame extends javax.swing.JFrame {
      public ArrayList<AllPacksClass> opakovki() {
         ArrayList<AllPacksClass> list = new ArrayList<>();
         try {
-
             Class.forName("org.h2.Driver");
             conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
             querry = "SELECT * from OPAKOVKI";
@@ -83,7 +82,7 @@ Class.forName("org.h2.Driver");
               conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
             model = (DefaultTableModel) AllPacksTable.getModel();
             int row = AllPacksTable.getSelectedRow();
-           id = (AllPacksTable.getModel().getValueAt(row, 1).toString());
+            id = (AllPacksTable.getModel().getValueAt(row, 1).toString());
             comment= (AllPacksTable.getModel().getValueAt(row, 5).toString());
             querry ="insert into comments values (?,?,CURRENT_DATE)";
              prs = conn.prepareStatement(querry);
@@ -93,12 +92,10 @@ Class.forName("org.h2.Driver");
 }catch(Exception e){
 JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );}
 }
-
     public AllPacksFrame() {
         initComponents();
         currentDate();
-        show_id();
-        
+        show_id();   
     }
     public void refreshInfo(){
     model = (DefaultTableModel)AllPacksTable.getModel();
@@ -110,7 +107,6 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         TableRowSorter<DefaultTableModel> trs = new TableRowSorter<>(model);
         AllPacksTable.setRowSorter(trs);
         trs.setRowFilter(RowFilter.regexFilter(str));
-
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -297,7 +293,6 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );
         }
-
     }//GEN-LAST:event_comentActionPerformed
 
     private void saveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsActionPerformed

@@ -4,7 +4,10 @@
  */
 package com.ClassesAndFrames;
 
+import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -15,6 +18,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -584,12 +588,13 @@ all.setTitle("Всички");
             public void run() {
                 try {
                     MainFrame frame =new MainFrame();
-                    frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("~/img/logo.png")));
+                    Image i = ImageIO.read(new FileInputStream("resources/logo.png"));
+                  frame.setIconImage(i);
                     frame.setTitle("Опаковки");
                     frame.setVisible(true);
                     
                     
-                } catch (SQLException | ClassNotFoundException ex) {
+                } catch (SQLException | ClassNotFoundException | IOException ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

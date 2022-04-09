@@ -15,6 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExportData {
+    ExportData(){}
     BufferedOutputStream out;
     FileOutputStream FOS;
     File file;
@@ -22,7 +23,6 @@ public class ExportData {
     Cell cell;
     Workbook wb;
     XSSFSheet sheet;
-    ExportData(){}
     public void openFile(String file){
     try{
     File path =new File(file);
@@ -36,7 +36,7 @@ public class ExportData {
     if(saveFile != null){
     saveFile=new File(saveFile.toString()+".xlsx");
      wb = new XSSFWorkbook();
-     sheet = (XSSFSheet) wb.createSheet("opakovki");
+     sheet = (XSSFSheet) wb.createSheet("опаковки");
     Row rowCol = sheet.createRow(0);
         for (int i = 0; i < jt.getColumnCount(); i++) {
              cell = rowCol.createCell(i);
@@ -52,10 +52,11 @@ public class ExportData {
             }
         }
          FOS = new FileOutputStream(new File(saveFile.toString()));
-        wb.write(out);
+        wb.write(FOS);
         wb.close();
-        out.close();
+        FOS.close();
         openFile(saveFile.toString());
+        
     }else{JOptionPane.showMessageDialog(null, "error");}
     }
 }

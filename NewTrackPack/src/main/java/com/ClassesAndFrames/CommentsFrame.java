@@ -124,13 +124,10 @@ public class CommentsFrame extends javax.swing.JFrame {
 
         commentsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3"
+                "Опаковка", "Коментар", "Дата"
             }
         ));
         jScrollPane1.setViewportView(commentsTable);
@@ -207,7 +204,7 @@ Class.forName("org.h2.Driver");
             rs = stm.executeQuery(querry);
             Comments comments = null;
             while(rs.next()){
-            comments = new Comments(rs.getString("ID"),rs.getString("comment"),rs.getString("datestamp"));
+            comments = new Comments(rs.getString("id"),rs.getString("comment"),rs.getString("datestamp"));
             list.add(comments);
             }
 }catch(Exception e){
@@ -223,7 +220,7 @@ return list;
             rows[0] = list1.get(i).getIDopakovka();
             rows[1] = list1.get(i).getComment();
             rows[2] = list1.get(i).getDatestamp();
-            
+            model.addRow(rows);
         }
     }
     

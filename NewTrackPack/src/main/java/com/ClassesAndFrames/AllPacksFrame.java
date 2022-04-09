@@ -7,6 +7,7 @@ package com.ClassesAndFrames;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -84,10 +85,11 @@ Class.forName("org.h2.Driver");
             int row = AllPacksTable.getSelectedRow();
             id = (AllPacksTable.getModel().getValueAt(row, 1).toString());
             comment= (AllPacksTable.getModel().getValueAt(row, 5).toString());
-            querry ="insert into comments values (?,?,CURRENT_DATE)";
+            querry ="insert into comments values (?,?,?)";
              prs = conn.prepareStatement(querry);
             prs.setString(1,id);
             prs.setString(2,comment);
+            prs.setString(3, date1.getText());
             prs.executeUpdate();
 }catch(Exception e){
 JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );}
@@ -177,10 +179,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
         AllPacksTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+
             },
             new String [] {
                 "Складова Разписка", "Опаковка", "Статус", "Местоположение", "Дата", "Коментар"
@@ -299,8 +298,8 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
         try {
             export.export(AllPacksTable);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+        } catch (IOException e) {
+            System.out.println(e);
         }
     }//GEN-LAST:event_saveAsActionPerformed
 
@@ -349,18 +348,14 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable AllPacksTable;
     private javax.swing.JButton coment;
-    private javax.swing.JLabel date;
     private javax.swing.JLabel date1;
     private javax.swing.JButton delete;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton refreshInfo;
     private javax.swing.JButton saveAs;
-    private javax.swing.JTextField search;
     private javax.swing.JTextField searchh;
     // End of variables declaration//GEN-END:variables
 }

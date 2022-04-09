@@ -14,6 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.RowFilter;
@@ -41,9 +43,17 @@ public class ProblemPacksFrame extends javax.swing.JFrame {
      * Creates new form ProblemPacksFrame
      * @throws java.sql.SQLException
      */
+    public void currentDate() {
+        GregorianCalendar cal = new GregorianCalendar();
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int year = cal.get(Calendar.YEAR);
+        date1.setText(day + "/" + (month + 1) + "/" + year);
+    }
     public ProblemPacksFrame() throws SQLException, ClassNotFoundException {
         initComponents();
         show_table();
+        currentDate();
     }
     public void insertProblem() throws SQLException, ClassNotFoundException{
     try{
@@ -53,9 +63,10 @@ Class.forName("org.h2.Driver");
             int row = problemTable.getSelectedRow();
             id = (problemTable.getModel().getValueAt(row, 0).toString());
             newID =(problemTable.getModel().getValueAt(row, 1).toString());
-            querry = "update new set newID=?, datestamp = CURRENT_DATE WHERE oldID='"+id+"'";
+            querry = "update new set newID=?, datestamp = ? WHERE oldID='"+id+"'";
             prs = conn.prepareStatement(querry);
             prs.setString(1, newID);
+            prs.setString(2, date1.getText());
             prs.executeUpdate();
             conn.close();}catch(Exception e){
             System.out.println(e);}

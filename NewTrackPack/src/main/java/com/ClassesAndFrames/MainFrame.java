@@ -26,7 +26,7 @@ String id;
 String status;
 AllPacksFrame frame1 = new AllPacksFrame();
 ProblemPacksFrame frame2;
-CommentsFrame frame3 ;
+CommentsFrame frame3 = new CommentsFrame();
 public void insertProblemId() throws SQLException{
     try{
         Class.forName("org.h2.Driver");
@@ -71,7 +71,7 @@ public void insertProblemId() throws SQLException{
             packID.append(ProblemID);
             }     
      if(!packID.toString().contains(id)){
-         String sql = "insert into opakovki values(?,?,?,CURRENT_DATE,?)";
+         String sql = "insert into opakovki values(?,?,?,?,?)";
      PreparedStatement pstmt = conn.prepareStatement(sql); 
           if (yes.isSelected()) {
               status = yes.getText();
@@ -82,7 +82,8 @@ public void insertProblemId() throws SQLException{
           pstmt.setString(1, Id.getText());
           pstmt.setString(2,status);
           pstmt.setString(3, location.getText());
-          pstmt.setString(4,numWh.getText());
+          pstmt.setString(4, date.getText());
+          pstmt.setString(5,numWh.getText());
             
           pstmt.executeUpdate();
           conn.close();
@@ -104,7 +105,7 @@ public void insertProblemId() throws SQLException{
                 insertProblemId();
             JOptionPane.showMessageDialog(null, "Дублирана опаковка " + id+"!");
             }else{
-            String updatePack= "update OPAKOVKI set Status =?, Location = ?, datestamp = CURRENT_DATE, numWh = ?where IDopakovka ='" +id+ "'";
+            String updatePack= "update OPAKOVKI set Status =?, Location = ?, datestamp = ?, numWh = ?where IDopakovka ='" +id+ "'";
             PreparedStatement pstmt = conn.prepareStatement(updatePack);
                 if (yes.isSelected()) {
                     status = yes.getText();
@@ -114,7 +115,8 @@ public void insertProblemId() throws SQLException{
                 }
                 pstmt.setString(1, status);
                 pstmt.setString(2, location.getText());
-                pstmt.setString(3,numWh.getText()); 
+                pstmt.setString(3, date.getText());
+                pstmt.setString(4,numWh.getText()); 
 
                 pstmt.executeUpdate();
 
@@ -341,7 +343,9 @@ public void insertProblemId() throws SQLException{
         jLabel4.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel4.setText("Местоположение");
 
-        location.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        location.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+
+        Id.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel2.setText("Номер на Опаковка");
@@ -513,6 +517,7 @@ frame1.setTitle("Всички");
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        btnGroup.clearSelection();
         numWh.setText("");
         oldDate.setText("");
         location.setText("");

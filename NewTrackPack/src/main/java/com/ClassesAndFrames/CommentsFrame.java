@@ -167,6 +167,11 @@ public final class CommentsFrame extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jButton1.setText("Изтрий");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jButton1MouseReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -231,6 +236,16 @@ public final class CommentsFrame extends javax.swing.JFrame {
          Logger.getLogger(CommentsFrame.class.getName()).log(Level.SEVERE, null, ex);
      }
     }//GEN-LAST:event_refreshInfoActionPerformed
+
+    private void jButton1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseReleased
+     try {
+         refreshInfo();        // TODO add your handling code here:
+     } catch (SQLException ex) {
+         Logger.getLogger(CommentsFrame.class.getName()).log(Level.SEVERE, null, ex);
+     } catch (ClassNotFoundException ex) {
+         Logger.getLogger(CommentsFrame.class.getName()).log(Level.SEVERE, null, ex);
+     }
+    }//GEN-LAST:event_jButton1MouseReleased
 public ArrayList<Comments> comments() throws SQLException, ClassNotFoundException{
 ArrayList<Comments> list = new ArrayList<>();
 try{

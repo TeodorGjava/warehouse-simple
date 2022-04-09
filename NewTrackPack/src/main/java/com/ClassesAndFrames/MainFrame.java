@@ -47,6 +47,7 @@ public void insertProblemId() throws SQLException{
             pr.setString(2, "");
             pr.setString(3, date.getText());
             pr.executeUpdate();
+            
             conn.close();
         }
     }catch(ClassNotFoundException | SQLException e ){

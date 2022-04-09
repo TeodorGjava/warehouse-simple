@@ -220,6 +220,11 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
         delete.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         delete.setText("Изтрий");
+        delete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                deleteMouseReleased(evt);
+            }
+        });
         delete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteActionPerformed(evt);
@@ -367,6 +372,10 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
     private void refreshInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshInfoActionPerformed
         refreshInfo();        // TODO add your handling code here:
     }//GEN-LAST:event_refreshInfoActionPerformed
+
+    private void deleteMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteMouseReleased
+        refreshInfo();
+    }//GEN-LAST:event_deleteMouseReleased
 
     /**
      * @param args the command line arguments

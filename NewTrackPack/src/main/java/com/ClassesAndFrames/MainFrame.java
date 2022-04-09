@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 
@@ -22,6 +24,8 @@ import javax.swing.JOptionPane;
 public final class MainFrame extends javax.swing.JFrame {
 String id;
 String status;
+AllPacksFrame frame1 = new AllPacksFrame();
+ProblemPacksFrame frame2;
 public void insertProblemId() throws SQLException{
     try{
         Class.forName("org.h2.Driver");
@@ -29,14 +33,14 @@ public void insertProblemId() throws SQLException{
             String querry = "insert into new values(?,?,CURRENT_DATE)";
             PreparedStatement pr = conn.prepareStatement(querry);
             pr.setString(1, Id.getText());
-            pr.setString(2, "-");
+            pr.setString(2, "");
             pr.executeUpdate();
             conn.close();
         }
     }catch(ClassNotFoundException | SQLException e ){
         System.out.println(e);}
 }
-AllPacksFrame frame1 = new AllPacksFrame();
+
    public void currentDate() {
         GregorianCalendar cal = new GregorianCalendar();
         int month = cal.get(Calendar.MONTH);
@@ -45,7 +49,8 @@ AllPacksFrame frame1 = new AllPacksFrame();
         date.setText(day + "/" + (month + 1) + "/" + year);
 
     }
-    public MainFrame() {
+    public MainFrame() throws SQLException, ClassNotFoundException {
+        this.frame2 = new ProblemPacksFrame();
         initComponents();
         currentDate();
     }
@@ -196,7 +201,7 @@ AllPacksFrame frame1 = new AllPacksFrame();
         btnGroup = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         coments = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        problemTable = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
@@ -256,11 +261,11 @@ AllPacksFrame frame1 = new AllPacksFrame();
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jButton3.setText("Склад");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        problemTable.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        problemTable.setText("Дублирани");
+        problemTable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                problemTableActionPerformed(evt);
             }
         });
 
@@ -285,7 +290,7 @@ AllPacksFrame frame1 = new AllPacksFrame();
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(coments, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
-            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(problemTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -295,7 +300,7 @@ AllPacksFrame frame1 = new AllPacksFrame();
                 .addContainerGap()
                 .addComponent(coments, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(problemTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
@@ -486,10 +491,11 @@ AllPacksFrame frame1 = new AllPacksFrame();
     
     }//GEN-LAST:event_comentsActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-     
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void problemTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_problemTableActionPerformed
+        frame2.setVisible(true);
+        
+       
+    }//GEN-LAST:event_problemTableActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
        
@@ -554,7 +560,13 @@ frame1.setVisible(true);
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainFrame().setVisible(true);
+                try {
+                    new MainFrame().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -565,7 +577,6 @@ frame1.setVisible(true);
     private javax.swing.ButtonGroup btnGroup;
     private javax.swing.JButton coments;
     private javax.swing.JLabel date;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton8;
@@ -585,6 +596,7 @@ frame1.setVisible(true);
     private javax.swing.JRadioButton no;
     private javax.swing.JTextField numWh;
     private javax.swing.JTextField oldDate;
+    private javax.swing.JButton problemTable;
     private javax.swing.JRadioButton yes;
     // End of variables declaration//GEN-END:variables
 }

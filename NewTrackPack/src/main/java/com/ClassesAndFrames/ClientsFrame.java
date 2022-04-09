@@ -42,10 +42,15 @@ DefaultTableModel model;
     String comment;
     String querry;
      ExportData export = new ExportData();
+     public void show_count(){
+     int count = opakovki().size();
+     sum.setText(String.valueOf(count));
+     }
     public ClientsFrame() {
         initComponents();
         show_id();
         currentDate();
+        show_count();
     }
 public void currentDate() {
         GregorianCalendar cal = new GregorianCalendar();
@@ -58,6 +63,7 @@ public void refreshInfo(){
     model = (DefaultTableModel)clientsTable.getModel();
      model.setRowCount(0);
      show_id();
+     show_count();
 }
 public void search(String str) {
         model = (DefaultTableModel) clientsTable.getModel();
@@ -131,6 +137,8 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         saveAs = new javax.swing.JButton();
         delete = new javax.swing.JButton();
         refreshInfo = new javax.swing.JButton();
+        sum = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -189,7 +197,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
             },
             new String [] {
-                "Складова Разписка", "Опаковка", "Статус", "Местоположение", "Дата", "Коментар"
+                "Складова Разписка", "Опаковка", "Статус", "Местоположение", "Дата на изпращане", "Коментар"
             }
         ));
         jScrollPane1.setViewportView(clientsTable);
@@ -233,6 +241,11 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
             }
         });
 
+        sum.setFont(new java.awt.Font("Dialog", 3, 14)); // NOI18N
+
+        jLabel1.setFont(new java.awt.Font("Dialog", 2, 14)); // NOI18N
+        jLabel1.setText("Sum:");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -248,14 +261,23 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
                         .addGap(27, 27, 27)
                         .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sum, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
+                .addGap(3, 3, 3)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(sum, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -356,6 +378,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
     private javax.swing.JButton coment;
     private javax.swing.JLabel date1;
     private javax.swing.JButton delete;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -363,5 +386,6 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
     private javax.swing.JButton refreshInfo;
     private javax.swing.JButton saveAs;
     private javax.swing.JTextField searchh;
+    private javax.swing.JLabel sum;
     // End of variables declaration//GEN-END:variables
 }

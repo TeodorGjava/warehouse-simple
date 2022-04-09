@@ -7,6 +7,7 @@ package com.ClassesAndFrames;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -40,10 +41,11 @@ public void insertProblemId() throws SQLException{
     try{
         Class.forName("org.h2.Driver");
         try (Connection conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test")) {
-            String querry = "insert into new values(?,?,CURRENT_DATE)";
+            String querry = "insert into new values(?,?,?)";
             PreparedStatement pr = conn.prepareStatement(querry);
             pr.setString(1, Id.getText());
             pr.setString(2, "");
+            pr.setString(3, date.getText());
             pr.executeUpdate();
             conn.close();
         }
@@ -66,8 +68,7 @@ public void insertProblemId() throws SQLException{
         
         
     }
-     public void add() throws SQLException, ClassNotFoundException {
-         
+     public void add() throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {    
      id = Id.getText();
      Class.forName("org.h2.Driver");
             Connection conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
@@ -132,7 +133,7 @@ public void insertProblemId() throws SQLException{
                 pstmt.executeUpdate();
 
                 conn.close();
-                JOptionPane.showMessageDialog(null, "Актуализирахте опаковка " + id+"!");
+                JOptionPane.showMessageDialog(null,"Актуализирахте опаковка " + id+"!");
             }  
      }
      }
@@ -363,9 +364,19 @@ public void insertProblemId() throws SQLException{
 
         add.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         add.setText("Добави");
+        add.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                addMouseReleased(evt);
+            }
+        });
         add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addActionPerformed(evt);
+            }
+        });
+        add.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                addKeyReleased(evt);
             }
         });
 
@@ -507,12 +518,30 @@ public void insertProblemId() throws SQLException{
     commentsFrame.setVisible(true);
     commentsFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     commentsFrame.setTitle("Особени случаи");
+    Image i = null;
+    try {
+        i = ImageIO.read(new FileInputStream("resources/comment.png"));
+    } catch (FileNotFoundException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+    }
+                  commentsFrame.setIconImage(i);
     }//GEN-LAST:event_comentsActionPerformed
 
     private void problemTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_problemTableActionPerformed
         problems.setVisible(true);
         problems.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         problems.setTitle("Дублирани");
+        Image i = null;
+    try {
+        i = ImageIO.read(new FileInputStream("resources/warning.png"));
+    } catch (FileNotFoundException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+    }
+                  problems.setIconImage(i);
         
        
     }//GEN-LAST:event_problemTableActionPerformed
@@ -521,12 +550,31 @@ public void insertProblemId() throws SQLException{
 clientFrame.setVisible(true);
 clientFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 clientFrame.setTitle("Клиенти");
+Image i = null;
+    try {
+        i = ImageIO.read(new FileInputStream("resources/list.png"));
+    } catch (FileNotFoundException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+    }
+                  clientFrame.setIconImage(i);
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 all.setVisible(true);
 all.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 all.setTitle("Всички");
+ Image i = null;
+    try {
+        i = ImageIO.read(new FileInputStream("resources/list.png"));
+    } catch (FileNotFoundException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+    }
+                  all.setIconImage(i);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -534,7 +582,8 @@ all.setTitle("Всички");
         numWh.setText("");
         oldDate.setText("");
         location.setText("");
-        Id.setText("");    
+        Id.setText(""); 
+        numWh.requestFocus();
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
@@ -544,6 +593,8 @@ all.setTitle("Всички");
         System.out.println(ex);
     } catch (ClassNotFoundException ex) {
         System.out.println(ex);
+    } catch (IOException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
     }
     }//GEN-LAST:event_addActionPerformed
 
@@ -554,6 +605,17 @@ all.setTitle("Всички");
     private void yesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_yesActionPerformed
+
+    private void addKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_addKeyReleased
+        // TODO add your handling code here: set cursor and delete id field
+        
+    }//GEN-LAST:event_addKeyReleased
+
+    private void addMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addMouseReleased
+        // TODO add your handling code here:
+        Id.setText("");
+        Id.requestFocus();
+    }//GEN-LAST:event_addMouseReleased
 
     /**
      * @param args the command line arguments
@@ -591,9 +653,7 @@ all.setTitle("Всички");
                     Image i = ImageIO.read(new FileInputStream("resources/logo.png"));
                   frame.setIconImage(i);
                     frame.setTitle("Опаковки");
-                    frame.setVisible(true);
-                    
-                    
+                    frame.setVisible(true); 
                 } catch (SQLException | ClassNotFoundException | IOException ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }

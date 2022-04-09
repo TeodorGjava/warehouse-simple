@@ -4,6 +4,7 @@
  */
 package com.ClassesAndFrames;
 
+import java.awt.Toolkit;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 
@@ -22,11 +24,14 @@ import javax.swing.JOptionPane;
  * @author Teodor Georgiev
  */
 public final class MainFrame extends javax.swing.JFrame {
+    
 String id;
 String status;
-AllPacksFrame frame1 = new AllPacksFrame();
-ProblemPacksFrame frame2;
-CommentsFrame frame3 = new CommentsFrame();
+AllPacksFrame all = new AllPacksFrame();
+ProblemPacksFrame problems;
+CommentsFrame commentsFrame = new CommentsFrame();
+ClientsFrame clientFrame = new ClientsFrame();
+ImageIcon img;
 public void insertProblemId() throws SQLException{
     try{
         Class.forName("org.h2.Driver");
@@ -51,9 +56,11 @@ public void insertProblemId() throws SQLException{
 
     }
     public MainFrame() throws SQLException, ClassNotFoundException {
-        this.frame2 = new ProblemPacksFrame();
+        this.problems = new ProblemPacksFrame();
         initComponents();
         currentDate();
+        
+        
     }
      public void add() throws SQLException, ClassNotFoundException {
          
@@ -493,27 +500,29 @@ public void insertProblemId() throws SQLException{
     }// </editor-fold>//GEN-END:initComponents
 
     private void comentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comentsActionPerformed
-    frame3.setVisible(true);
-    frame3.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    frame3.setTitle("Особени случаи");
+    commentsFrame.setVisible(true);
+    commentsFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    commentsFrame.setTitle("Особени случаи");
     }//GEN-LAST:event_comentsActionPerformed
 
     private void problemTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_problemTableActionPerformed
-        frame2.setVisible(true);
-        frame2.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        frame2.setTitle("Дублирани");
+        problems.setVisible(true);
+        problems.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        problems.setTitle("Дублирани");
         
        
     }//GEN-LAST:event_problemTableActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-       
+clientFrame.setVisible(true);
+clientFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+clientFrame.setTitle("Клиенти");
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-frame1.setVisible(true);
-frame1.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-frame1.setTitle("Всички");
+all.setVisible(true);
+all.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+all.setTitle("Всички");
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -571,12 +580,16 @@ frame1.setTitle("Всички");
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 try {
-                    new MainFrame().setVisible(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
+                    MainFrame frame =new MainFrame();
+                    frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("~/img/logo.png")));
+                    frame.setTitle("Опаковки");
+                    frame.setVisible(true);
+                    
+                    
+                } catch (SQLException | ClassNotFoundException ex) {
                     Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

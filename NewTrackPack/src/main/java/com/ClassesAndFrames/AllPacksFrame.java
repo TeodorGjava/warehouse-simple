@@ -38,6 +38,18 @@ public final class AllPacksFrame extends javax.swing.JFrame {
     String comment;
     String querry;
     ExportData export = new ExportData();
+    
+     public AllPacksFrame() {
+        initComponents();
+        currentDate();
+        show_id();
+        show_count();
+    }
+     public void show_count(){
+     int count = opakovki().size();
+     sum.setText(String.valueOf(count));
+     
+     }
      public ArrayList<AllPacksClass> opakovki() {
         ArrayList<AllPacksClass> list = new ArrayList<>();
         try {
@@ -46,13 +58,13 @@ public final class AllPacksFrame extends javax.swing.JFrame {
             querry = "SELECT * from OPAKOVKI";
 
             Statement stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery(querry);
+            rs = stm.executeQuery(querry);
             AllPacksClass AllPacks = null;
             while (rs.next()) {
                 AllPacks = new AllPacksClass(rs.getString("IDopakovka"), rs.getString("Status"), rs.getString("Location"), rs.getString("datestamp"), rs.getString("numWh"));
                 list.add(AllPacks);
             }
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | SQLException e) {
             JOptionPane.showMessageDialog(null, e);
         }
         return list;
@@ -91,18 +103,15 @@ Class.forName("org.h2.Driver");
             prs.setString(2,comment);
             prs.setString(3, date1.getText());
             prs.executeUpdate();
-}catch(Exception e){
+}catch(ClassNotFoundException | SQLException e){
 JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );}
 }
-    public AllPacksFrame() {
-        initComponents();
-        currentDate();
-        show_id();   
-    }
+   
     public void refreshInfo(){
     model = (DefaultTableModel)AllPacksTable.getModel();
      model.setRowCount(0);
      show_id();
+     show_count();
 }
     public void search(String str) {
         model = (DefaultTableModel) AllPacksTable.getModel();
@@ -121,10 +130,13 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         AllPacksTable = new javax.swing.JTable();
-        coment = new javax.swing.JButton();
-        saveAs = new javax.swing.JButton();
-        delete = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        sum = new javax.swing.JLabel();
         refreshInfo = new javax.swing.JButton();
+        delete = new javax.swing.JButton();
+        saveAs = new javax.swing.JButton();
+        coment = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -143,7 +155,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         });
 
         jLabel2.setBackground(new java.awt.Color(0, 102, 102));
-        jLabel2.setFont(new java.awt.Font("Dialog", 2, 18)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(204, 255, 204));
         jLabel2.setText("Търсене:");
 
@@ -177,6 +189,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
         jPanel2.setForeground(new java.awt.Color(51, 51, 51));
 
+        AllPacksTable.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         AllPacksTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -187,23 +200,22 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         ));
         jScrollPane1.setViewportView(AllPacksTable);
 
-        coment.setFont(new java.awt.Font("Arial Black", 1, 14)); // NOI18N
-        coment.setText("Добави Коментар");
-        coment.addActionListener(new java.awt.event.ActionListener() {
+        jLabel1.setFont(new java.awt.Font("Dialog", 2, 14)); // NOI18N
+        jLabel1.setText("Sum:");
+
+        sum.setFont(new java.awt.Font("Dialog", 3, 14)); // NOI18N
+
+        refreshInfo.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        refreshInfo.setText("Обнови");
+        refreshInfo.setIconTextGap(0);
+        refreshInfo.setPreferredSize(new java.awt.Dimension(40, 42));
+        refreshInfo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comentActionPerformed(evt);
+                refreshInfoActionPerformed(evt);
             }
         });
 
-        saveAs.setFont(new java.awt.Font("Arial Black", 1, 14)); // NOI18N
-        saveAs.setText(".XLS");
-        saveAs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveAsActionPerformed(evt);
-            }
-        });
-
-        delete.setFont(new java.awt.Font("Arial Black", 1, 14)); // NOI18N
+        delete.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         delete.setText("Изтрий");
         delete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -216,15 +228,57 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
             }
         });
 
-        refreshInfo.setFont(new java.awt.Font("Arial Black", 1, 14)); // NOI18N
-        refreshInfo.setText("Обнови");
-        refreshInfo.setIconTextGap(0);
-        refreshInfo.setPreferredSize(new java.awt.Dimension(40, 42));
-        refreshInfo.addActionListener(new java.awt.event.ActionListener() {
+        saveAs.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        saveAs.setText(".XLS");
+        saveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshInfoActionPerformed(evt);
+                saveAsActionPerformed(evt);
             }
         });
+
+        coment.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        coment.setText("Добави Коментар");
+        coment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comentActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sum, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(sum, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -233,30 +287,17 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -307,7 +348,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
         try {
             Class.forName("org.h2.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
 
             int row = AllPacksTable.getSelectedRow();
             String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
@@ -350,12 +391,15 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
     private javax.swing.JButton coment;
     private javax.swing.JLabel date1;
     private javax.swing.JButton delete;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton refreshInfo;
     private javax.swing.JButton saveAs;
     private javax.swing.JTextField searchh;
+    private javax.swing.JLabel sum;
     // End of variables declaration//GEN-END:variables
 }

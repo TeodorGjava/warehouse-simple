@@ -26,6 +26,7 @@ String id;
 String status;
 AllPacksFrame frame1 = new AllPacksFrame();
 ProblemPacksFrame frame2;
+CommentsFrame frame3 ;
 public void insertProblemId() throws SQLException{
     try{
         Class.forName("org.h2.Driver");
@@ -488,11 +489,15 @@ public void insertProblemId() throws SQLException{
     }// </editor-fold>//GEN-END:initComponents
 
     private void comentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comentsActionPerformed
-    
+    frame3.setVisible(true);
+    frame3.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    frame3.setTitle("Особени случаи");
     }//GEN-LAST:event_comentsActionPerformed
 
     private void problemTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_problemTableActionPerformed
         frame2.setVisible(true);
+        frame2.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        frame2.setTitle("Дублирани");
         
        
     }//GEN-LAST:event_problemTableActionPerformed
@@ -503,6 +508,8 @@ public void insertProblemId() throws SQLException{
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 frame1.setVisible(true);
+frame1.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+frame1.setTitle("Всички");
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed

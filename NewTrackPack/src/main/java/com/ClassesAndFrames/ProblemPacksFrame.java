@@ -4,6 +4,7 @@
  */
 package com.ClassesAndFrames;
 
+import java.awt.event.KeyEvent;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -189,6 +190,11 @@ public void search(String str) {
                 "Дублиран номер", "Нов номер", "Дата"
             }
         ));
+        problemTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                problemTableKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(problemTable);
 
         setNewID.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
@@ -283,6 +289,17 @@ public void search(String str) {
             Logger.getLogger(ProblemPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_refreshInfoActionPerformed
+
+    private void problemTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_problemTableKeyPressed
+if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+try {
+            insertProblem();  
+            refreshInfo();
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(ProblemPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+}        // TODO add your handling code here:
+    }//GEN-LAST:event_problemTableKeyPressed
 
   
 

@@ -6,6 +6,7 @@ package com.ClassesAndFrames;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -359,6 +360,11 @@ public void insertProblemId() throws SQLException{
         location.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
 
         Id.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        Id.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                IdKeyPressed(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel2.setText("Номер на Опаковка");
@@ -617,6 +623,24 @@ all.setTitle("Всички");
         Id.setText("");
         Id.requestFocus();
     }//GEN-LAST:event_addMouseReleased
+
+    private void IdKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_IdKeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            try {
+                add();
+                Id.setText("");
+                Id.requestFocus();
+            } catch (SQLException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+        }
+    }//GEN-LAST:event_IdKeyPressed
 
     /**
      * @param args the command line arguments

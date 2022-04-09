@@ -4,6 +4,7 @@
  */
 package com.ClassesAndFrames;
 
+import java.awt.event.KeyEvent;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -198,6 +199,11 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
                 "Складова Разписка", "Опаковка", "Статус", "Местоположение", "Дата", "Коментар"
             }
         ));
+        AllPacksTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                AllPacksTableKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(AllPacksTable);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 2, 14)); // NOI18N
@@ -378,7 +384,8 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
     }//GEN-LAST:event_refreshInfoActionPerformed
 
     private void searchhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchhActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here: update sum when search filter is on
+        
     }//GEN-LAST:event_searchhActionPerformed
 
     private void searchhKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchhKeyReleased
@@ -389,6 +396,27 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
     private void deleteMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteMouseReleased
         refreshInfo();
     }//GEN-LAST:event_deleteMouseReleased
+
+    private void AllPacksTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_AllPacksTableKeyPressed
+        if(evt.getKeyCode()==KeyEvent.VK_DELETE){
+         try {
+            Class.forName("org.h2.Driver");
+            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+
+            int row = AllPacksTable.getSelectedRow();
+            String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
+            String query1 = "DELETE FROM OPAKOVKI where IDopakovka='" + value + "'";
+            PreparedStatement pst = conn.prepareStatement(query1);
+            pst.executeUpdate();
+            model = (DefaultTableModel) AllPacksTable.getModel();
+            model.setRowCount(0);
+            show_id();
+            refreshInfo();
+            JOptionPane.showMessageDialog(null, "Изтрихте " + value);
+        } catch (Exception e) {
+            System.out.println(e);
+        }}
+    }//GEN-LAST:event_AllPacksTableKeyPressed
 
     /**
      * @param args the command line arguments

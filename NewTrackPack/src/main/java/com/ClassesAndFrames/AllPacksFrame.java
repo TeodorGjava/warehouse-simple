@@ -104,6 +104,8 @@ Class.forName("org.h2.Driver");
             prs.setString(2,comment);
             prs.setString(3, date1.getText());
             prs.executeUpdate();
+            String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
+            JOptionPane.showMessageDialog(null, "Добавихте коментар за опаковка "+value+"!");
 }catch(ClassNotFoundException | SQLException e){
 JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );}
 }
@@ -416,6 +418,16 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         } catch (Exception e) {
             System.out.println(e);
         }}
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            try {
+                comment();
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        refreshInfo();
+        }
     }//GEN-LAST:event_AllPacksTableKeyPressed
 
     /**

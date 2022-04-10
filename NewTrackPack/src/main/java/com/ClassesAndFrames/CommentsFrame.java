@@ -4,6 +4,7 @@
  */
 package com.ClassesAndFrames;
 
+import java.awt.event.KeyEvent;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,6 +19,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -56,6 +58,24 @@ public final class CommentsFrame extends javax.swing.JFrame {
         int year = cal.get(Calendar.YEAR);
         date1.setText(day + "/" + (month + 1) + "/" + year);
     }
+    public void delete(){
+     try {
+            Class.forName("org.h2.Driver");
+             conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+
+            int row = commentsTable.getSelectedRow();
+            String value = (commentsTable.getModel().getValueAt(row, 0).toString());
+            String query1 = "DELETE FROM comments where id='" + value + "'";
+            PreparedStatement pst = conn.prepareStatement(query1);
+            pst.executeUpdate();
+            model = (DefaultTableModel) commentsTable.getModel();
+            model.setRowCount(0);
+            show_comments();
+            JOptionPane.showMessageDialog(null, "Изтрихте " + value);
+            refreshInfo();
+        } catch (Exception e) {
+            System.out.println(e);
+        }}
  public void search(String str) {
         model = (DefaultTableModel) commentsTable.getModel();
         TableRowSorter<DefaultTableModel> trs = new TableRowSorter<>(model);
@@ -137,6 +157,11 @@ public final class CommentsFrame extends javax.swing.JFrame {
                 "Опаковка", "Коментар", "Дата"
             }
         ));
+        commentsTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                commentsTableKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(commentsTable);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -170,6 +195,11 @@ public final class CommentsFrame extends javax.swing.JFrame {
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jButton1MouseReleased(evt);
+            }
+        });
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -246,6 +276,17 @@ public final class CommentsFrame extends javax.swing.JFrame {
          Logger.getLogger(CommentsFrame.class.getName()).log(Level.SEVERE, null, ex);
      }
     }//GEN-LAST:event_jButton1MouseReleased
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+      delete();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void commentsTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_commentsTableKeyPressed
+if(evt.getKeyCode()==KeyEvent.VK_DELETE){
+ delete();    
+    
+}   
+    }//GEN-LAST:event_commentsTableKeyPressed
 public ArrayList<Comments> comments() throws SQLException, ClassNotFoundException{
 ArrayList<Comments> list = new ArrayList<>();
 try{

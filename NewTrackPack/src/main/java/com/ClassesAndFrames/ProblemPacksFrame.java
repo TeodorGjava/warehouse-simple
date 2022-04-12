@@ -64,7 +64,7 @@ public class ProblemPacksFrame extends javax.swing.JFrame {
     public void insertProblem() throws SQLException, ClassNotFoundException{
     try{
 Class.forName("org.h2.Driver");
-              conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+              conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             model = (DefaultTableModel) problemTable.getModel();
             int row = problemTable.getSelectedRow();
             id = (problemTable.getModel().getValueAt(row, 0).toString());
@@ -84,7 +84,7 @@ Class.forName("org.h2.Driver");
         ArrayList<ProblemPacksClass> list = new ArrayList();
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             querry = "SELECT * from new";
             Statement stm = conn.createStatement();
             rs = stm.executeQuery(querry);

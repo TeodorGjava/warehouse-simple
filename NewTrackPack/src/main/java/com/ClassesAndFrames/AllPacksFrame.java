@@ -55,7 +55,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
         ArrayList<AllPacksClass> list = new ArrayList<>();
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             querry = "SELECT * from OPAKOVKI";
 
             Statement stm = conn.createStatement();
@@ -93,7 +93,7 @@ public void currentDate() {
 public void comment() throws ClassNotFoundException, SQLException{ 
 try{
 Class.forName("org.h2.Driver");
-              conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+              conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             model = (DefaultTableModel) AllPacksTable.getModel();
             int row = AllPacksTable.getSelectedRow();
             id = (AllPacksTable.getModel().getValueAt(row, 1).toString());
@@ -361,7 +361,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
 
             int row = AllPacksTable.getSelectedRow();
             String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
@@ -403,7 +403,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         if(evt.getKeyCode()==KeyEvent.VK_DELETE){
          try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
 
             int row = AllPacksTable.getSelectedRow();
             String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());

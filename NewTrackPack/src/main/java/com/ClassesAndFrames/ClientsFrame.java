@@ -76,7 +76,7 @@ public ArrayList<Clients> opakovki() {
         String status = "Клиент";
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             querry = "SELECT * from OPAKOVKI WHERE STATUS='"+status+"'";
 
             Statement stm = conn.createStatement();
@@ -108,7 +108,7 @@ public void show_id(){
    public void comment() throws ClassNotFoundException, SQLException{ 
 try{
 Class.forName("org.h2.Driver");
-              conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+              conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             model = (DefaultTableModel) clientsTable.getModel();
             int row = clientsTable.getSelectedRow();
             id = (clientsTable.getModel().getValueAt(row, 1).toString());
@@ -349,7 +349,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
         try {
             Class.forName("org.h2.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            Connection conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
 
             int row = clientsTable.getSelectedRow();
             String value = (clientsTable.getModel().getValueAt(row, 1).toString());

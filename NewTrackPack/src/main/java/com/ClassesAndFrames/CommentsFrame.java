@@ -61,7 +61,7 @@ public final class CommentsFrame extends javax.swing.JFrame {
     public void delete(){
      try {
             Class.forName("org.h2.Driver");
-             conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+             conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
 
             int row = commentsTable.getSelectedRow();
             String value = (commentsTable.getModel().getValueAt(row, 0).toString());
@@ -291,7 +291,7 @@ public ArrayList<Comments> comments() throws SQLException, ClassNotFoundExceptio
 ArrayList<Comments> list = new ArrayList<>();
 try{
 Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             querry = "SELECT * from comments";
             Statement stm = conn.createStatement();
             rs = stm.executeQuery(querry);

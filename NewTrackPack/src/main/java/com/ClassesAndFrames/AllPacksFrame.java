@@ -426,9 +426,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         if(evt.getKeyCode()==KeyEvent.VK_ENTER){
             try {
                 comment();
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLException ex) {
+            } catch (ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         refreshInfo();

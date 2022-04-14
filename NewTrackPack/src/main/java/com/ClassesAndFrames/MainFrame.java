@@ -4,10 +4,8 @@
  */
 package com.ClassesAndFrames;
 
-import java.awt.Image;
-import java.awt.Toolkit;
+
 import java.awt.event.KeyEvent;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -20,7 +18,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -528,65 +525,27 @@ public void insertProblemId() throws SQLException{
     commentsFrame.setVisible(true);
     commentsFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     commentsFrame.setTitle("Особени случаи");
-   /* Image i = null;
-    try {
-        i = ImageIO.read(new FileInputStream("/resources/comment.png"));
-    } catch (FileNotFoundException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    }
-                  commentsFrame.setIconImage(i);
-    */
+
     }//GEN-LAST:event_comentsActionPerformed
 
     private void problemTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_problemTableActionPerformed
         problems.setVisible(true);
         problems.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         problems.setTitle("Дублирани");
-  /*      Image i = null;
-    try {
-        i = ImageIO.read(new FileInputStream("resources/warning.png"));
-    } catch (FileNotFoundException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    }
-                  problems.setIconImage(i);
-     */   
-       
+
     }//GEN-LAST:event_problemTableActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
 clientFrame.setVisible(true);
 clientFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 clientFrame.setTitle("Клиенти");
-Image i = null;
-   /* try {
-        i = ImageIO.read(new FileInputStream("resources/list.png"));
-    } catch (FileNotFoundException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    }
-                  clientFrame.setIconImage(i);
-*/
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 all.setVisible(true);
 all.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 all.setTitle("Всички");
-/* Image i = null;
-    try {
-        i = ImageIO.read(new FileInputStream("resources/list.png"));
-    } catch (FileNotFoundException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    }
-                  all.setIconImage(i);
-*/
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -636,11 +595,7 @@ all.setTitle("Всички");
                 add();
                 Id.setText("");
                 Id.requestFocus();
-            } catch (SQLException ex) {
-                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (SQLException | ClassNotFoundException | IOException ex) {
                 Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         
@@ -675,18 +630,14 @@ all.setTitle("Всички");
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    MainFrame frame =new MainFrame();
-                    //Image i = ImageIO.read(new FileInputStream("resources\\logo.png"));
-                 // frame.setIconImage(i);
-                    frame.setTitle("Опаковки");
-                    frame.setVisible(true); 
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-              } 
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                MainFrame frame =new MainFrame();
+
+                frame.setTitle("Опаковки");
+                frame.setVisible(true);
+            } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex); 
             }
         });
     }

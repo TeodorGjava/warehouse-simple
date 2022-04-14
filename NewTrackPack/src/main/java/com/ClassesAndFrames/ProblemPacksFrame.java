@@ -28,7 +28,7 @@ import javax.swing.table.TableRowSorter;
  *
  * @author LL
  */
-public class ProblemPacksFrame extends javax.swing.JFrame {
+public final class ProblemPacksFrame extends javax.swing.JFrame {
     DefaultTableModel model;
     Connection conn;
     PreparedStatement prs;

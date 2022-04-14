@@ -4,6 +4,7 @@
  */
 package com.ClassesAndFrames;
 
+import java.awt.HeadlessException;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -86,7 +87,7 @@ public ArrayList<Clients> opakovki() {
                 PacksClients = new Clients(rs.getString("IDopakovka"), rs.getString("Status"), rs.getString("Location"), rs.getString("datestamp"), rs.getString("numWh"));
                 list.add(PacksClients);
             }
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | SQLException e) {
             JOptionPane.showMessageDialog(null, e);
         }
         return list;
@@ -119,8 +120,11 @@ Class.forName("org.h2.Driver");
             prs.setString(2,comment);
             prs.setString(3, date1.getText());
             prs.executeUpdate();
-}catch(Exception e){
-JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );}
+}catch(ClassNotFoundException | SQLException e){
+JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );
+}catch(ArrayIndexOutOfBoundsException ex){
+            JOptionPane.showMessageDialog(null, "Няма избрано поле!");
+        }
 }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -349,7 +353,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
         try {
             Class.forName("org.h2.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
+           conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
 
             int row = clientsTable.getSelectedRow();
             String value = (clientsTable.getModel().getValueAt(row, 1).toString());
@@ -360,8 +364,10 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
             model.setRowCount(0);
             show_id();
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
-        } catch (Exception e) {
+        } catch (HeadlessException | ClassNotFoundException | SQLException e) {
             System.out.println(e);
+        }catch(ArrayIndexOutOfBoundsException ex){
+            JOptionPane.showMessageDialog(null, "Няма избрано поле!");
         }
     }//GEN-LAST:event_deleteActionPerformed
 

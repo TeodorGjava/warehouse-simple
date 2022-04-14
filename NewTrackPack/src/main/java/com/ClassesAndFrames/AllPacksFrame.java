@@ -4,6 +4,7 @@
  */
 package com.ClassesAndFrames;
 
+import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -342,9 +343,11 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         try {
             comment();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
+             JOptionPane.showMessageDialog(null, ex);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );
+        }catch(ArrayIndexOutOfBoundsException ex){
+        JOptionPane.showMessageDialog(null, "Празно поле!");
         }
     }//GEN-LAST:event_comentActionPerformed
 
@@ -372,8 +375,10 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
             model.setRowCount(0);
             show_id();
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
-        } catch (Exception e) {
+        } catch (HeadlessException | ClassNotFoundException | SQLException e) {
             System.out.println(e);
+        }catch(ArrayIndexOutOfBoundsException ex){
+            JOptionPane.showMessageDialog(null, "Няма избрано поле!");
         }
     }//GEN-LAST:event_deleteActionPerformed
 

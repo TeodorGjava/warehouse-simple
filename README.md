@@ -1,6 +1,7 @@
 # App overview
 Desktop warehouse-packs-tracking app with embedded h2 database.
   Developed to replace old techniques for tracking and monitoring warehouse activity, avoiding human mistake the app turns warehouse monitoring into an easy task.
+ [!Screenshot](Main.png)
 # Functionality
 <h3>Quick and easy embedded h2 database access.</h3>
 Database file and trace are created on first start after packing an installer in the installation directory folder,

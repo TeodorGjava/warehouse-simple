@@ -4,10 +4,8 @@
  */
 package com.ClassesAndFrames;
 
-import java.awt.Image;
-import java.awt.Toolkit;
+
 import java.awt.event.KeyEvent;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -20,7 +18,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -41,7 +38,7 @@ ImageIcon img;
 public void insertProblemId() throws SQLException{
     try{
         Class.forName("org.h2.Driver");
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test")) {
+        try (Connection conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test")) {
             String querry = "insert into new values(?,?,?)";
             PreparedStatement pr = conn.prepareStatement(querry);
             pr.setString(1, Id.getText());
@@ -73,7 +70,7 @@ public void insertProblemId() throws SQLException{
      public void add() throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {    
      id = Id.getText();
      Class.forName("org.h2.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            Connection conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
      if(oldDate.getText().equals("")){
      String checkID = "SELECT * FROM OPAKOVKI\n" +
 "WHERE OPAKOVKI.IDopakovka ='"+id+"'";
@@ -180,7 +177,6 @@ public void insertProblemId() throws SQLException{
             String problemStat = showStatusRS.getString("Status");
             tank.append(problemStat);
             }
-            conn.close();
             if(tank.toString().contains(status)){   
             insertProblemId();
             conn.close();
@@ -202,8 +198,10 @@ public void insertProblemId() throws SQLException{
                 pstmt.executeUpdate();
 
                 conn.close();
+                if(!Id.getText().equals("")){
                 JOptionPane.showMessageDialog(null, "Актуализирахте опаковка " + id+"!");
-            }
+            }else{
+                JOptionPane.showMessageDialog(null,"Непълен запис !");}}
      }
      }
      }
@@ -266,7 +264,7 @@ public void insertProblemId() throws SQLException{
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(255, 51, 0));
+        jPanel1.setBackground(new java.awt.Color(0, 51, 51));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -315,13 +313,13 @@ public void insertProblemId() throws SQLException{
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(coments, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(coments, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(problemTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(problemTable, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -412,9 +410,9 @@ public void insertProblemId() throws SQLException{
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(date, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(date, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -470,7 +468,7 @@ public void insertProblemId() throws SQLException{
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(numWh, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -515,7 +513,9 @@ public void insertProblemId() throws SQLException{
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
 
         pack();
@@ -525,47 +525,20 @@ public void insertProblemId() throws SQLException{
     commentsFrame.setVisible(true);
     commentsFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     commentsFrame.setTitle("Особени случаи");
-    Image i = null;
-    try {
-        i = ImageIO.read(new FileInputStream("resources/comment.png"));
-    } catch (FileNotFoundException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    }
-                  commentsFrame.setIconImage(i);
+
     }//GEN-LAST:event_comentsActionPerformed
 
     private void problemTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_problemTableActionPerformed
         problems.setVisible(true);
         problems.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         problems.setTitle("Дублирани");
-        Image i = null;
-    try {
-        i = ImageIO.read(new FileInputStream("resources/warning.png"));
-    } catch (FileNotFoundException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    }
-                  problems.setIconImage(i);
-        
-       
+
     }//GEN-LAST:event_problemTableActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
 clientFrame.setVisible(true);
 clientFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 clientFrame.setTitle("Клиенти");
-Image i = null;
-    try {
-        i = ImageIO.read(new FileInputStream("resources/list.png"));
-    } catch (FileNotFoundException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    }
-                  clientFrame.setIconImage(i);
 
     }//GEN-LAST:event_jButton5ActionPerformed
 
@@ -573,15 +546,6 @@ Image i = null;
 all.setVisible(true);
 all.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 all.setTitle("Всички");
- Image i = null;
-    try {
-        i = ImageIO.read(new FileInputStream("resources/list.png"));
-    } catch (FileNotFoundException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    }
-                  all.setIconImage(i);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -631,11 +595,7 @@ all.setTitle("Всички");
                 add();
                 Id.setText("");
                 Id.requestFocus();
-            } catch (SQLException ex) {
-                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (SQLException | ClassNotFoundException | IOException ex) {
                 Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         
@@ -670,18 +630,14 @@ all.setTitle("Всички");
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    MainFrame frame =new MainFrame();
-                    Image i = ImageIO.read(new FileInputStream("resources/logo.png"));
-                  frame.setIconImage(i);
-                    frame.setTitle("Опаковки");
-                    frame.setVisible(true); 
-                } catch (SQLException | ClassNotFoundException | IOException ex) {
-                    Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                MainFrame frame =new MainFrame();
+
+                frame.setTitle("Опаковки");
+                frame.setVisible(true);
+            } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex); 
             }
         });
     }

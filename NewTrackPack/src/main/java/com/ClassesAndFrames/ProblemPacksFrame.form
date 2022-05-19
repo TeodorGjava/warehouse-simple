@@ -133,9 +133,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="setNewID" min="-2" pref="216" max="-2" attributes="0"/>
+                          <Component id="setNewID" linkSize="1" min="-2" pref="216" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
+                          <Component id="delete" linkSize="1" min="-2" pref="204" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
-                          <Component id="refreshInfo" min="-2" pref="200" max="-2" attributes="0"/>
+                          <Component id="refreshInfo" linkSize="1" min="-2" pref="200" max="-2" attributes="0"/>
                       </Group>
                       <Component id="jScrollPane1" pref="744" max="32767" attributes="0"/>
                   </Group>
@@ -150,8 +152,9 @@
                   <Component id="jScrollPane1" min="-2" pref="407" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="setNewID" alignment="3" pref="48" max="32767" attributes="0"/>
-                      <Component id="refreshInfo" alignment="3" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="setNewID" linkSize="2" alignment="3" min="-2" pref="48" max="-2" attributes="0"/>
+                      <Component id="refreshInfo" linkSize="2" alignment="3" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="delete" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -231,6 +234,19 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshInfoActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="delete">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="SansSerif" size="18" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="&#x418;&#x437;&#x442;&#x440;&#x438;&#x439;"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="deleteMouseReleased"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="deleteKeyReleased"/>
           </Events>
         </Component>
       </SubComponents>

@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -27,7 +28,7 @@ import javax.swing.table.TableRowSorter;
  *
  * @author LL
  */
-public class ProblemPacksFrame extends javax.swing.JFrame {
+public final class ProblemPacksFrame extends javax.swing.JFrame {
     DefaultTableModel model;
     Connection conn;
     PreparedStatement prs;
@@ -64,7 +65,7 @@ public class ProblemPacksFrame extends javax.swing.JFrame {
     public void insertProblem() throws SQLException, ClassNotFoundException{
     try{
 Class.forName("org.h2.Driver");
-              conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+              conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             model = (DefaultTableModel) problemTable.getModel();
             int row = problemTable.getSelectedRow();
             id = (problemTable.getModel().getValueAt(row, 0).toString());
@@ -74,8 +75,10 @@ Class.forName("org.h2.Driver");
             prs.setString(1, newID);
             prs.setString(2, date1.getText());
             prs.executeUpdate();
-            conn.close();}catch(Exception e){
-            System.out.println(e);}
+            conn.close();}catch(ClassNotFoundException | SQLException e){
+            System.out.println(e);}catch(ArrayIndexOutOfBoundsException ex){
+            JOptionPane.showMessageDialog(null, "Запишете нов номер!");
+        }
     
     
     
@@ -84,7 +87,7 @@ Class.forName("org.h2.Driver");
         ArrayList<ProblemPacksClass> list = new ArrayList();
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             querry = "SELECT * from new";
             Statement stm = conn.createStatement();
             rs = stm.executeQuery(querry);
@@ -130,6 +133,7 @@ public void search(String str) {
         problemTable = new javax.swing.JTable();
         setNewID = new javax.swing.JButton();
         refreshInfo = new javax.swing.JButton();
+        delete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -215,6 +219,24 @@ public void search(String str) {
             }
         });
 
+        delete.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        delete.setText("Изтрий");
+        delete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                deleteMouseReleased(evt);
+            }
+        });
+        delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteActionPerformed(evt);
+            }
+        });
+        delete.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                deleteKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -224,11 +246,16 @@ public void search(String str) {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(setNewID, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(58, 58, 58)
+                        .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {delete, refreshInfo, setNewID});
+
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -236,10 +263,13 @@ public void search(String str) {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(setNewID, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE)
-                    .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(setNewID, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(delete))
                 .addContainerGap())
         );
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {delete, refreshInfo, setNewID});
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -301,10 +331,46 @@ try {
 }        // TODO add your handling code here:
     }//GEN-LAST:event_problemTableKeyPressed
 
+    private void deleteMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteMouseReleased
+        try {
+            refreshInfo();
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(ProblemPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_deleteMouseReleased
+
+    private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
+
+        try {
+            Class.forName("org.h2.Driver");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
+
+            int row = problemTable.getSelectedRow();
+            String value = (problemTable.getModel().getValueAt(row, 0).toString());
+            String query1 = "DELETE FROM new where OLDID='" + value + "'";
+            PreparedStatement pst = conn.prepareStatement(query1);
+            pst.executeUpdate();
+            model = (DefaultTableModel) problemTable.getModel();
+            model.setRowCount(0);
+            show_table();
+            JOptionPane.showMessageDialog(null, "Изтрихте " + value);
+        }
+        catch(ArrayIndexOutOfBoundsException ex){
+            JOptionPane.showMessageDialog(null, "Няма избрано поле!");
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(ProblemPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_deleteActionPerformed
+
+    private void deleteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_deleteKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_deleteKeyReleased
+
   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel date1;
+    private javax.swing.JButton delete;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

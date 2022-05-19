@@ -4,6 +4,7 @@
  */
 package com.ClassesAndFrames;
 
+import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -55,7 +56,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
         ArrayList<AllPacksClass> list = new ArrayList<>();
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             querry = "SELECT * from OPAKOVKI";
 
             Statement stm = conn.createStatement();
@@ -93,7 +94,7 @@ public void currentDate() {
 public void comment() throws ClassNotFoundException, SQLException{ 
 try{
 Class.forName("org.h2.Driver");
-              conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+              conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             model = (DefaultTableModel) AllPacksTable.getModel();
             int row = AllPacksTable.getSelectedRow();
             id = (AllPacksTable.getModel().getValueAt(row, 1).toString());
@@ -342,9 +343,11 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         try {
             comment();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
+             JOptionPane.showMessageDialog(null, ex);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );
+        }catch(ArrayIndexOutOfBoundsException ex){
+        JOptionPane.showMessageDialog(null, "Празно поле!");
         }
     }//GEN-LAST:event_comentActionPerformed
 
@@ -361,7 +364,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
 
             int row = AllPacksTable.getSelectedRow();
             String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
@@ -372,8 +375,10 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
             model.setRowCount(0);
             show_id();
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
-        } catch (Exception e) {
+        } catch (HeadlessException | ClassNotFoundException | SQLException e) {
             System.out.println(e);
+        }catch(ArrayIndexOutOfBoundsException ex){
+            JOptionPane.showMessageDialog(null, "Няма избрано поле!");
         }
     }//GEN-LAST:event_deleteActionPerformed
 
@@ -403,7 +408,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         if(evt.getKeyCode()==KeyEvent.VK_DELETE){
          try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
 
             int row = AllPacksTable.getSelectedRow();
             String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
@@ -421,9 +426,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         if(evt.getKeyCode()==KeyEvent.VK_ENTER){
             try {
                 comment();
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLException ex) {
+            } catch (ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         refreshInfo();

@@ -4,6 +4,7 @@
  */
 package com.ClassesAndFrames;
 
+import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -61,7 +62,7 @@ public final class CommentsFrame extends javax.swing.JFrame {
     public void delete(){
      try {
             Class.forName("org.h2.Driver");
-             conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+             conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
 
             int row = commentsTable.getSelectedRow();
             String value = (commentsTable.getModel().getValueAt(row, 0).toString());
@@ -73,8 +74,10 @@ public final class CommentsFrame extends javax.swing.JFrame {
             show_comments();
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
             refreshInfo();
-        } catch (Exception e) {
+        } catch (HeadlessException | ClassNotFoundException | SQLException e) {
             System.out.println(e);
+        }catch(ArrayIndexOutOfBoundsException ex){
+            JOptionPane.showMessageDialog(null, "Няма избрано поле!");
         }}
  public void search(String str) {
         model = (DefaultTableModel) commentsTable.getModel();
@@ -270,9 +273,7 @@ public final class CommentsFrame extends javax.swing.JFrame {
     private void jButton1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseReleased
      try {
          refreshInfo();        // TODO add your handling code here:
-     } catch (SQLException ex) {
-         Logger.getLogger(CommentsFrame.class.getName()).log(Level.SEVERE, null, ex);
-     } catch (ClassNotFoundException ex) {
+     } catch (SQLException | ClassNotFoundException ex) {
          Logger.getLogger(CommentsFrame.class.getName()).log(Level.SEVERE, null, ex);
      }
     }//GEN-LAST:event_jButton1MouseReleased
@@ -291,7 +292,7 @@ public ArrayList<Comments> comments() throws SQLException, ClassNotFoundExceptio
 ArrayList<Comments> list = new ArrayList<>();
 try{
 Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:~/DB;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             querry = "SELECT * from comments";
             Statement stm = conn.createStatement();
             rs = stm.executeQuery(querry);
@@ -300,7 +301,7 @@ Class.forName("org.h2.Driver");
             comments = new Comments(rs.getString("id"),rs.getString("comment"),rs.getString("datestamp"));
             list.add(comments);
             }
-}catch(Exception e){
+}catch(ClassNotFoundException | SQLException e){
     System.out.println(e);}
 return list;
 

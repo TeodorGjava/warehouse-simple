@@ -16,9 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExportData {
     ExportData(){}
-    BufferedOutputStream out;
     FileOutputStream FOS;
-    File file;
     Row row;
     Cell cell;
     Workbook wb;
@@ -29,12 +27,12 @@ public class ExportData {
     java.awt.Desktop.getDesktop().open(path);
             }catch(IOException e){}
     }
-    public void export(JTable jt) throws FileNotFoundException, IOException{
+    public void export(JTable jt) throws IOException{
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.showSaveDialog(jt);
     File saveFile = fileChooser.getSelectedFile();
     if(saveFile != null){
-    saveFile=new File(saveFile.toString()+".xlsx");
+    saveFile=new File(saveFile +".xlsx");
      wb = new XSSFWorkbook();
      sheet = (XSSFSheet) wb.createSheet("опаковки");
     Row rowCol = sheet.createRow(0);
@@ -51,7 +49,7 @@ public class ExportData {
                 }
             }
         }
-         FOS = new FileOutputStream(new File(saveFile.toString()));
+         FOS = new FileOutputStream(saveFile.toString());
         wb.write(FOS);
         wb.close();
         FOS.close();

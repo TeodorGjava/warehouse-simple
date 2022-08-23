@@ -9,32 +9,21 @@ package com.ClassesAndFrames;
  * @author LL
  */
 public class Comments {
-    String IDopakovka;
-    String comment;
-    String datestamp;
+    private final String IDopakovka;
+    private final String comment;
+    private final String datestamp;
 
     public String getIDopakovka() {
         return IDopakovka;
-    }
-
-    public void setIDopakovka(String IDopakovka) {
-        this.IDopakovka = IDopakovka;
     }
 
     public String getComment() {
         return comment;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
 
     public String getDatestamp() {
         return datestamp;
-    }
-
-    public void setDatestamp(String datestamp) {
-        this.datestamp = datestamp;
     }
 
     public Comments(String IDopakovka, String comment, String datestamp) {

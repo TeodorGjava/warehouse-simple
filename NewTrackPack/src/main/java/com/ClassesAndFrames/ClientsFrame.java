@@ -16,8 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -26,12 +24,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
- *
  * @author LL
  */
 public final class ClientsFrame extends javax.swing.JFrame {
 
-DefaultTableModel model;
+    DefaultTableModel model;
     Connection conn;
     PreparedStatement prs;
     ResultSet rs;
@@ -41,47 +38,50 @@ DefaultTableModel model;
     String num;
     String id;
     String comment;
-    String querry;
-     ExportData export = new ExportData();
-     public void show_count(){
-     int count = opakovki().size();
-     sum.setText(String.valueOf(count));
-     }
+    String query;
+    ExportData export = new ExportData();
+
+    public void show_count() {
+        int count = opakovki().size();
+        sum.setText(String.valueOf(count));
+    }
+
     public ClientsFrame() {
         initComponents();
         show_id();
         currentDate();
         show_count();
     }
-public void currentDate() {
-        GregorianCalendar cal = new GregorianCalendar();
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int year = cal.get(Calendar.YEAR);
-        date1.setText(day + "/" + (month + 1) + "/" + year);
+
+    public void currentDate() {
+        DateTime date = new DateTime();
+        date1.setText(date.getDate());
     }
-public void refreshInfo(){
-    model = (DefaultTableModel)clientsTable.getModel();
-     model.setRowCount(0);
-     show_id();
-     show_count();
-}
-public void search(String str) {
+
+    public void refreshInfo() {
+        model = (DefaultTableModel) clientsTable.getModel();
+        model.setRowCount(0);
+        show_id();
+        show_count();
+    }
+
+    public void search(String str) {
         model = (DefaultTableModel) clientsTable.getModel();
         TableRowSorter<DefaultTableModel> trs = new TableRowSorter<>(model);
         clientsTable.setRowSorter(trs);
         trs.setRowFilter(RowFilter.regexFilter(str));
     }
-public ArrayList<Clients> opakovki() {
+
+    public ArrayList<Clients> opakovki() {
         ArrayList<Clients> list = new ArrayList<>();
         String status = "Клиент";
         try {
             Class.forName("org.h2.Driver");
             conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
-            querry = "SELECT * from OPAKOVKI WHERE STATUS='"+status+"'";
+            query = "SELECT * from OPAKOVKI WHERE STATUS='" + status + "'";
 
             Statement stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery(querry);
+            ResultSet rs = stm.executeQuery(query);
             Clients PacksClients = null;
             while (rs.next()) {
                 PacksClients = new Clients(rs.getString("IDopakovka"), rs.getString("Status"), rs.getString("Location"), rs.getString("datestamp"), rs.getString("numWh"));
@@ -92,8 +92,9 @@ public ArrayList<Clients> opakovki() {
         }
         return list;
     }
-public void show_id(){
-     ArrayList<Clients> list1 = opakovki();
+
+    public void show_id() {
+        ArrayList<Clients> list1 = opakovki();
         model = (DefaultTableModel) clientsTable.getModel();
         Object[] rows = new Object[5];
         for (int i = 0; i < list1.size(); i++) {
@@ -104,45 +105,46 @@ public void show_id(){
             rows[4] = list1.get(i).getDatestamp();
             model.addRow(rows);
         }
-}
-     
-   public void comment() throws ClassNotFoundException, SQLException{ 
-try{
-Class.forName("org.h2.Driver");
-              conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
+    }
+
+    public void comment() throws ClassNotFoundException, SQLException {
+        try {
+            Class.forName("org.h2.Driver");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             model = (DefaultTableModel) clientsTable.getModel();
             int row = clientsTable.getSelectedRow();
             id = (clientsTable.getModel().getValueAt(row, 1).toString());
-            comment= (clientsTable.getModel().getValueAt(row, 5).toString());
-            querry ="insert into comments values (?,?,?)";
-             prs = conn.prepareStatement(querry);
-            prs.setString(1,id);
-            prs.setString(2,comment);
+            comment = (clientsTable.getModel().getValueAt(row, 5).toString());
+            query = "insert into comments values (?,?,?)";
+            prs = conn.prepareStatement(query);
+            prs.setString(1, id);
+            prs.setString(2, comment);
             prs.setString(3, date1.getText());
             prs.executeUpdate();
-}catch(ClassNotFoundException | SQLException e){
-JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );
-}catch(ArrayIndexOutOfBoundsException ex){
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка " + id);
+        } catch (ArrayIndexOutOfBoundsException ex) {
             JOptionPane.showMessageDialog(null, "Няма избрано поле!");
         }
-}
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
         searchh = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         date1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
+        javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
         clientsTable = new javax.swing.JTable();
-        coment = new javax.swing.JButton();
-        saveAs = new javax.swing.JButton();
-        delete = new javax.swing.JButton();
-        refreshInfo = new javax.swing.JButton();
+        javax.swing.JButton coment = new javax.swing.JButton();
+        javax.swing.JButton saveAs = new javax.swing.JButton();
+        javax.swing.JButton delete = new javax.swing.JButton();
+        javax.swing.JButton refreshInfo = new javax.swing.JButton();
         sum = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -172,37 +174,37 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(date1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(368, 368, 368)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(date1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(368, 368, 368)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 15, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(date1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 15, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(date1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         jPanel2.setForeground(new java.awt.Color(51, 51, 51));
 
         clientsTable.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         clientsTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][]{
 
-            },
-            new String [] {
-                "Складова Разписка", "Опаковка", "Статус", "Местоположение", "Дата на изпращане", "Коментар"
-            }
+                },
+                new String[]{
+                        "Складова Разписка", "Опаковка", "Статус", "Местоположение", "Дата на изпращане", "Коментар"
+                }
         ));
         jScrollPane1.setViewportView(clientsTable);
 
@@ -258,63 +260,63 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(sum, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(27, 27, 27)
+                                                .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(sum, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(3, 3, 3)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(sum, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(3, 3, 3)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(sum, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
 
         pack();
@@ -336,7 +338,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка "+id );
+            JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка " + id);
         }
     }//GEN-LAST:event_comentActionPerformed
 
@@ -353,7 +355,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
 
         try {
             Class.forName("org.h2.Driver");
-           conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
+            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
 
             int row = clientsTable.getSelectedRow();
             String value = (clientsTable.getModel().getValueAt(row, 1).toString());
@@ -366,7 +368,7 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
         } catch (HeadlessException | ClassNotFoundException | SQLException e) {
             System.out.println(e);
-        }catch(ArrayIndexOutOfBoundsException ex){
+        } catch (ArrayIndexOutOfBoundsException ex) {
             JOptionPane.showMessageDialog(null, "Няма избрано поле!");
         }
     }//GEN-LAST:event_deleteActionPerformed
@@ -386,20 +388,11 @@ JOptionPane.showMessageDialog(null, "Вече има добавен комент
     /**
      * @param args the command line arguments
      */
-   
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable clientsTable;
-    private javax.swing.JButton coment;
     private javax.swing.JLabel date1;
-    private javax.swing.JButton delete;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton refreshInfo;
-    private javax.swing.JButton saveAs;
     private javax.swing.JTextField searchh;
     private javax.swing.JLabel sum;
     // End of variables declaration//GEN-END:variables

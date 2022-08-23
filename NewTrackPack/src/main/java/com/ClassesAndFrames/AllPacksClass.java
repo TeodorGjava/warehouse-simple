@@ -6,11 +6,11 @@ package com.ClassesAndFrames;
 
 
 public class AllPacksClass {
-    private String IDopakovka;
-    private String Status;
-     private String Location;
+    private final String IDopakovka;
+    private final String Status;
+     private final String Location;
     private String datestamp;
-    private String numWh;
+    private final String numWh;
 
     public AllPacksClass(String IDopakovka, String Status, String Location, String datestamp, String numWh) {
         this.IDopakovka = IDopakovka;
@@ -25,41 +25,20 @@ public class AllPacksClass {
         return IDopakovka;
     }
 
-    public String setIDopakovka(String str) {
-        return str;
-    }
-
     public String getStatus() {
         return Status;
-    }
-
-    public String setStatus(String str) {
-        return str;
     }
 
     public String getLocation() {
         return Location;
     }
 
-    public String setLocation(String str) {
-        return str;
-    }
-
     public String getDatestamp() {
         return datestamp;
-    }
-
-    public void setDatestamp(String datestamp) {
-        this.datestamp = datestamp;
     }
 
     public String getNumWh() {
         return numWh;
     }
 
-    public String setNumWh(String str) {
-        return str;
-    }
-   
-    
 }

@@ -125,7 +125,7 @@ public void search(String str) {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         searchh = new javax.swing.JTextField();
         date1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -133,7 +133,7 @@ public void search(String str) {
         problemTable = new javax.swing.JTable();
         setNewID = new javax.swing.JButton();
         refreshInfo = new javax.swing.JButton();
-        delete = new javax.swing.JButton();
+        javax.swing.JButton delete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -370,8 +370,6 @@ try {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel date1;
-    private javax.swing.JButton delete;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

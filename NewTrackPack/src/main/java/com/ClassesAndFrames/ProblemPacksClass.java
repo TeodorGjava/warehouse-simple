@@ -5,13 +5,18 @@
 package com.ClassesAndFrames;
 
 /**
- *
  * @author LL
  */
 public class ProblemPacksClass {
     private final String IDopakovka;
     private final String newID;
     private final String datestamp;
+
+    public ProblemPacksClass(String IDopakovka, String newID, String datestamp) {
+        this.IDopakovka = IDopakovka;
+        this.newID = newID;
+        this.datestamp = datestamp;
+    }
 
     public String getIDopakovka() {
         return IDopakovka;
@@ -24,9 +29,5 @@ public class ProblemPacksClass {
     public String getDatestamp() {
         return datestamp;
     }
-    public ProblemPacksClass(String IDopakovka, String newID, String datestamp) {
-        this.IDopakovka = IDopakovka;
-        this.newID = newID;
-        this.datestamp = datestamp;
-    }
+
 }

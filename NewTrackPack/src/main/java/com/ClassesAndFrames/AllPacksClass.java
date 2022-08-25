@@ -9,7 +9,7 @@ public class AllPacksClass {
     private final String IDopakovka;
     private final String Status;
      private final String Location;
-    private String datestamp;
+    private final String datestamp;
     private final String numWh;
 
     public AllPacksClass(String IDopakovka, String Status, String Location, String datestamp, String numWh) {

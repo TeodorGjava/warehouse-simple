@@ -6,9 +6,6 @@ package com.ClassesAndFrames;
 
 import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -43,12 +40,12 @@ public final class AllPacksFrame extends javax.swing.JFrame {
     }
 
     public void show_count() {
-        int count = opakovki().size();
+        int count = packs().size();
         sum.setText(String.valueOf(count));
 
     }
 
-    public ArrayList<AllPacksClass> opakovki() {
+    public ArrayList<AllPacksClass> packs() {
         ArrayList<AllPacksClass> list = new ArrayList<>();
         try {
             Class.forName("org.h2.Driver");
@@ -69,15 +66,15 @@ public final class AllPacksFrame extends javax.swing.JFrame {
     }
 
     public void show_id() {
-        ArrayList<AllPacksClass> list1 = opakovki();
+        ArrayList<AllPacksClass> list1 = packs();
         model = (DefaultTableModel) AllPacksTable.getModel();
         Object[] rows = new Object[5];
-        for (int i = 0; i < list1.size(); i++) {
-            rows[0] = list1.get(i).getNumWh();
-            rows[1] = list1.get(i).getIDopakovka();
-            rows[2] = list1.get(i).getStatus();
-            rows[3] = list1.get(i).getLocation();
-            rows[4] = list1.get(i).getDatestamp();
+        for (AllPacksClass allPacksClass : list1) {
+            rows[0] = allPacksClass.getNumWh();
+            rows[1] = allPacksClass.getIDopakovka();
+            rows[2] = allPacksClass.getStatus();
+            rows[3] = allPacksClass.getLocation();
+            rows[4] = allPacksClass.getDatestamp();
             model.addRow(rows);
         }
     }
@@ -127,7 +124,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
-        searchh = new javax.swing.JTextField();
+        search = new javax.swing.JTextField();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         date1 = new javax.swing.JLabel();
         javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
@@ -145,15 +142,15 @@ public final class AllPacksFrame extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 51, 51));
 
-        searchh.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        searchh.addActionListener(new java.awt.event.ActionListener() {
+        search.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchhActionPerformed(evt);
             }
         });
-        searchh.addKeyListener(new java.awt.event.KeyAdapter() {
+        search.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                searchhKeyReleased(evt);
+                searchKeyReleased(evt);
             }
         });
 
@@ -176,7 +173,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
                                 .addGap(368, 368, 368)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -186,7 +183,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(date1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
@@ -253,7 +250,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
         coment.setText("Добави Коментар");
         coment.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comentActionPerformed(evt);
+                commentActionPerformed(evt);
             }
         });
 
@@ -337,7 +334,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void comentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comentActionPerformed
+    private void commentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comentActionPerformed
 
         try {
             comment();
@@ -368,8 +365,8 @@ public final class AllPacksFrame extends javax.swing.JFrame {
             int row = AllPacksTable.getSelectedRow();
             String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
             String query1 = "DELETE FROM OPAKOVKI where IDopakovka='" + value + "'";
-            PreparedStatement pst = conn.prepareStatement(query1);
-            pst.executeUpdate();
+            prs = conn.prepareStatement(query1);
+            prs.executeUpdate();
             model = (DefaultTableModel) AllPacksTable.getModel();
             model.setRowCount(0);
             show_id();
@@ -394,10 +391,10 @@ public final class AllPacksFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_searchhActionPerformed
 
-    private void searchhKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchhKeyReleased
-        String searchTxt = searchh.getText();
+    private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchhKeyReleased
+        String searchTxt = search.getText();
         search(searchTxt);
-    }//GEN-LAST:event_searchhKeyReleased
+    }//GEN-LAST:event_searchKeyReleased
 
     private void deleteMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteMouseReleased
         refreshInfo();
@@ -442,7 +439,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable AllPacksTable;
     private javax.swing.JLabel date1;
-    private javax.swing.JTextField searchh;
+    private javax.swing.JTextField search;
     private javax.swing.JLabel sum;
     // End of variables declaration//GEN-END:variables
 }

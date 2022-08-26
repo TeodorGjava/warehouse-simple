@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,25 +27,19 @@ import javax.swing.table.TableRowSorter;
  */
 public final class ClientsFrame extends javax.swing.JFrame {
 
-    DefaultTableModel model;
-    Connection conn;
-    PreparedStatement prs;
-    ResultSet rs;
-    BufferedOutputStream out;
-    FileOutputStream FOS;
-    File file;
-    String num;
-    String id;
-    String comment;
-    String query;
-    ExportData export = new ExportData();
+    private DefaultTableModel model;
+    private final Connection connection = new DataBaseConnector().getConnection();
+    private PreparedStatement preparedStatement;
+    private String id;
+    private String query;
+    private final ExportData export = new ExportData();
 
     public void show_count() {
         int count = opakovki().size();
         sum.setText(String.valueOf(count));
     }
 
-    public ClientsFrame() {
+    public ClientsFrame() throws SQLException {
         initComponents();
         show_id();
         currentDate();
@@ -67,9 +60,10 @@ public final class ClientsFrame extends javax.swing.JFrame {
 
     public void search(String str) {
         model = (DefaultTableModel) clientsTable.getModel();
-        TableRowSorter<DefaultTableModel> trs = new TableRowSorter<>(model);
-        clientsTable.setRowSorter(trs);
-        trs.setRowFilter(RowFilter.regexFilter(str));
+        TableRowSorter<DefaultTableModel> tableModelTableRowSorter = new TableRowSorter<>(model);
+
+        clientsTable.setRowSorter(tableModelTableRowSorter);
+        tableModelTableRowSorter.setRowFilter(RowFilter.regexFilter(str));
     }
 
     public ArrayList<Clients> opakovki() {
@@ -77,14 +71,13 @@ public final class ClientsFrame extends javax.swing.JFrame {
         String status = "Клиент";
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             query = "SELECT * from OPAKOVKI WHERE STATUS='" + status + "'";
 
-            Statement stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery(query);
-            Clients PacksClients = null;
-            while (rs.next()) {
-                PacksClients = new Clients(rs.getString("IDopakovka"), rs.getString("Status"), rs.getString("Location"), rs.getString("datestamp"), rs.getString("numWh"));
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            Clients PacksClients;
+            while (resultSet.next()) {
+                PacksClients = new Clients(resultSet.getString("IDopakovka"), resultSet.getString("Status"), resultSet.getString("Location"), resultSet.getString("datestamp"), resultSet.getString("numWh"));
                 list.add(PacksClients);
             }
         } catch (ClassNotFoundException | SQLException e) {
@@ -96,13 +89,14 @@ public final class ClientsFrame extends javax.swing.JFrame {
     public void show_id() {
         ArrayList<Clients> list1 = opakovki();
         model = (DefaultTableModel) clientsTable.getModel();
+
         Object[] rows = new Object[5];
-        for (int i = 0; i < list1.size(); i++) {
-            rows[0] = list1.get(i).getNumWh();
-            rows[1] = list1.get(i).getIDopakovka();
-            rows[2] = list1.get(i).getStatus();
-            rows[3] = list1.get(i).getLocation();
-            rows[4] = list1.get(i).getDatestamp();
+        for (Clients clients : list1) {
+            rows[0] = clients.getNumWh();
+            rows[1] = clients.getIDopakovka();
+            rows[2] = clients.getStatus();
+            rows[3] = clients.getLocation();
+            rows[4] = clients.getDatestamp();
             model.addRow(rows);
         }
     }
@@ -110,17 +104,20 @@ public final class ClientsFrame extends javax.swing.JFrame {
     public void comment() throws ClassNotFoundException, SQLException {
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             model = (DefaultTableModel) clientsTable.getModel();
             int row = clientsTable.getSelectedRow();
+
             id = (clientsTable.getModel().getValueAt(row, 1).toString());
-            comment = (clientsTable.getModel().getValueAt(row, 5).toString());
+            String comment = (clientsTable.getModel().getValueAt(row, 5).toString());
+
             query = "insert into comments values (?,?,?)";
-            prs = conn.prepareStatement(query);
-            prs.setString(1, id);
-            prs.setString(2, comment);
-            prs.setString(3, date1.getText());
-            prs.executeUpdate();
+
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, id);
+            preparedStatement.setString(2, comment);
+            preparedStatement.setString(3, date1.getText());
+
+            preparedStatement.executeUpdate();
         } catch (ClassNotFoundException | SQLException e) {
             JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка " + id);
         } catch (ArrayIndexOutOfBoundsException ex) {
@@ -133,7 +130,7 @@ public final class ClientsFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
-        searchh = new javax.swing.JTextField();
+        search = new javax.swing.JTextField();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         date1 = new javax.swing.JLabel();
         javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
@@ -150,13 +147,13 @@ public final class ClientsFrame extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 51, 51));
 
-        searchh.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        searchh.addActionListener(new java.awt.event.ActionListener() {
+        search.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchhActionPerformed(evt);
             }
         });
-        searchh.addKeyListener(new java.awt.event.KeyAdapter() {
+        search.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 searchhKeyReleased(evt);
             }
@@ -181,7 +178,7 @@ public final class ClientsFrame extends javax.swing.JFrame {
                                 .addGap(368, 368, 368)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -191,7 +188,7 @@ public final class ClientsFrame extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(date1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
@@ -327,7 +324,7 @@ public final class ClientsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_searchhActionPerformed
 
     private void searchhKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchhKeyReleased
-        String searchTxt = searchh.getText();
+        String searchTxt = search.getText();
         search(searchTxt);
     }//GEN-LAST:event_searchhKeyReleased
 
@@ -355,13 +352,11 @@ public final class ClientsFrame extends javax.swing.JFrame {
 
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
-
             int row = clientsTable.getSelectedRow();
             String value = (clientsTable.getModel().getValueAt(row, 1).toString());
-            String query1 = "DELETE FROM OPAKOVKI where IDopakovka='" + value + "'";
-            PreparedStatement pst = conn.prepareStatement(query1);
-            pst.executeUpdate();
+            query = "DELETE FROM OPAKOVKI where IDopakovka='" + value + "'";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.executeUpdate();
             model = (DefaultTableModel) clientsTable.getModel();
             model.setRowCount(0);
             show_id();
@@ -393,7 +388,7 @@ public final class ClientsFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable clientsTable;
     private javax.swing.JLabel date1;
-    private javax.swing.JTextField searchh;
+    private javax.swing.JTextField search;
     private javax.swing.JLabel sum;
     // End of variables declaration//GEN-END:variables
 }

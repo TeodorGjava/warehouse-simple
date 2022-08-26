@@ -4,20 +4,13 @@
  */
 package com.ClassesAndFrames;
 
-import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -29,10 +22,9 @@ import javax.swing.table.TableRowSorter;
  * @author LL
  */
 public final class CommentsFrame extends javax.swing.JFrame {
-    DefaultTableModel model;
-    Connection conn;
-    ResultSet rs;
-    String query;
+    private DefaultTableModel model;
+    private final Connection connection = new DataBaseConnector().getConnection();
+    private String query;
 
     public CommentsFrame() throws SQLException, ClassNotFoundException {
         initComponents();
@@ -47,40 +39,33 @@ public final class CommentsFrame extends javax.swing.JFrame {
     }
 
     public void currentDate() {
-        GregorianCalendar cal = new GregorianCalendar();
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int year = cal.get(Calendar.YEAR);
-        date1.setText(day + "/" + (month + 1) + "/" + year);
+        DateTime theDate = new DateTime();
+        date1.setText(theDate.getDate());
     }
 
     public void delete() {
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
-
             int row = commentsTable.getSelectedRow();
             String value = (commentsTable.getModel().getValueAt(row, 0).toString());
             query = "DELETE FROM comments where id='" + value + "'";
-            PreparedStatement pst = conn.prepareStatement(query);
-            pst.executeUpdate();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.executeUpdate();
             model = (DefaultTableModel) commentsTable.getModel();
             model.setRowCount(0);
             show_comments();
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
             refreshInfo();
-        } catch (HeadlessException | ClassNotFoundException | SQLException e) {
-            System.out.println(e);
-        } catch (ArrayIndexOutOfBoundsException ex) {
+        } catch (ArrayIndexOutOfBoundsException | SQLException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null, "Няма избрано поле!");
         }
     }
 
     public void search(String str) {
         model = (DefaultTableModel) commentsTable.getModel();
-        TableRowSorter<DefaultTableModel> trs = new TableRowSorter<>(model);
-        commentsTable.setRowSorter(trs);
-        trs.setRowFilter(RowFilter.regexFilter(str));
+        TableRowSorter<DefaultTableModel> modelTableRowSorter = new TableRowSorter<>(model);
+        commentsTable.setRowSorter(modelTableRowSorter);
+        modelTableRowSorter.setRowFilter(RowFilter.regexFilter(str));
     }
 
     @SuppressWarnings("unchecked")
@@ -89,7 +74,7 @@ public final class CommentsFrame extends javax.swing.JFrame {
 
         javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        searchh = new javax.swing.JTextField();
+        search = new javax.swing.JTextField();
         date1 = new javax.swing.JLabel();
         javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
         javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
@@ -107,13 +92,13 @@ public final class CommentsFrame extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(204, 255, 204));
         jLabel2.setText("Търсене:");
 
-        searchh.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        searchh.addActionListener(new java.awt.event.ActionListener() {
+        search.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchhActionPerformed(evt);
             }
         });
-        searchh.addKeyListener(new java.awt.event.KeyAdapter() {
+        search.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 searchhKeyReleased(evt);
             }
@@ -133,7 +118,7 @@ public final class CommentsFrame extends javax.swing.JFrame {
                                 .addGap(251, 251, 251)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(37, 37, 37))
         );
         jPanel1Layout.setVerticalGroup(
@@ -144,7 +129,7 @@ public final class CommentsFrame extends javax.swing.JFrame {
                                         .addComponent(date1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                 .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
-                                                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(10, 10, 10))
         );
 
@@ -255,7 +240,7 @@ public final class CommentsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_searchhActionPerformed
 
     private void searchhKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchhKeyReleased
-        String searchTxt = searchh.getText();
+        String searchTxt = search.getText();
         search(searchTxt);
     }//GEN-LAST:event_searchhKeyReleased
 
@@ -286,22 +271,19 @@ public final class CommentsFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_commentsTableKeyPressed
 
-    public ArrayList<Comments> comments() {
+    public ArrayList<Comments> comments() throws ClassNotFoundException, SQLException {
         ArrayList<Comments> list = new ArrayList<>();
-        try {
-            Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
-            query = "SELECT * from comments";
-            Statement stm = conn.createStatement();
-            rs = stm.executeQuery(query);
-            Comments comments;
-            while (rs.next()) {
-                comments = new Comments(rs.getString("id"), rs.getString("comment"), rs.getString("datestamp"));
-                list.add(comments);
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-            System.out.println(e);
+
+        Class.forName("org.h2.Driver");
+        query = "SELECT * from comments";
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+        Comments comments;
+        while (resultSet.next()) {
+            comments = new Comments(resultSet.getString("id"), resultSet.getString("comment"), resultSet.getString("datestamp"));
+            list.add(comments);
         }
+
         return list;
 
     }
@@ -310,10 +292,10 @@ public final class CommentsFrame extends javax.swing.JFrame {
         ArrayList<Comments> list1 = comments();
         model = (DefaultTableModel) commentsTable.getModel();
         Object[] rows = new Object[3];
-        for (int i = 0; i < list1.size(); i++) {
-            rows[0] = list1.get(i).getIDopakovka();
-            rows[1] = list1.get(i).getComment();
-            rows[2] = list1.get(i).getDatestamp();
+        for (Comments comments : list1) {
+            rows[0] = comments.getIDopakovka();
+            rows[1] = comments.getComment();
+            rows[2] = comments.getDatestamp();
             model.addRow(rows);
         }
     }
@@ -322,6 +304,6 @@ public final class CommentsFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable commentsTable;
     private javax.swing.JLabel date1;
-    private javax.swing.JTextField searchh;
+    private javax.swing.JTextField search;
     // End of variables declaration//GEN-END:variables
 }

@@ -23,16 +23,14 @@ import javax.swing.table.TableRowSorter;
 
 
 public final class AllPacksFrame extends javax.swing.JFrame {
-    DefaultTableModel model;
-    Connection conn;
-    PreparedStatement prs;
-    ResultSet rs;
-    String id;
-    String comment;
-    String query;
-    ExportData export = new ExportData();
+    private DefaultTableModel model;
+    private final Connection connection = new DataBaseConnector().getConnection();
+    private PreparedStatement preparedStatement;
+    private String id;
+    private String query;
+    private final ExportData export = new ExportData();
 
-    public AllPacksFrame() {
+    public AllPacksFrame() throws SQLException {
         initComponents();
         currentDate();
         show_id();
@@ -49,14 +47,14 @@ public final class AllPacksFrame extends javax.swing.JFrame {
         ArrayList<AllPacksClass> list = new ArrayList<>();
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             query = "SELECT * from OPAKOVKI";
 
-            Statement stm = conn.createStatement();
-            rs = stm.executeQuery(query);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
             AllPacksClass AllPacks;
-            while (rs.next()) {
-                AllPacks = new AllPacksClass(rs.getString("IDopakovka"), rs.getString("Status"), rs.getString("Location"), rs.getString("datestamp"), rs.getString("numWh"));
+            while (resultSet.next()) {
+                AllPacks = new AllPacksClass(resultSet.getString("IDopakovka"), resultSet.getString("Status"), resultSet.getString("Location"), resultSet.getString("datestamp"), resultSet.getString("numWh"));
                 list.add(AllPacks);
             }
         } catch (ClassNotFoundException | SQLException e) {
@@ -68,6 +66,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
     public void show_id() {
         ArrayList<AllPacksClass> list1 = packs();
         model = (DefaultTableModel) AllPacksTable.getModel();
+
         Object[] rows = new Object[5];
         for (AllPacksClass allPacksClass : list1) {
             rows[0] = allPacksClass.getNumWh();
@@ -87,17 +86,19 @@ public final class AllPacksFrame extends javax.swing.JFrame {
     public void comment() throws ClassNotFoundException, SQLException {
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             model = (DefaultTableModel) AllPacksTable.getModel();
             int row = AllPacksTable.getSelectedRow();
+
             id = (AllPacksTable.getModel().getValueAt(row, 1).toString());
-            comment = (AllPacksTable.getModel().getValueAt(row, 5).toString());
+            String comment = (AllPacksTable.getModel().getValueAt(row, 5).toString());
             query = "insert into comments values (?,?,?)";
-            prs = conn.prepareStatement(query);
-            prs.setString(1, id);
-            prs.setString(2, comment);
-            prs.setString(3, date1.getText());
-            prs.executeUpdate();
+
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, id);
+            preparedStatement.setString(2, comment);
+            preparedStatement.setString(3, date1.getText());
+
+            preparedStatement.executeUpdate();
             String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
             JOptionPane.showMessageDialog(null, "Добавихте коментар за опаковка " + value + "!");
         } catch (ClassNotFoundException | SQLException e) {
@@ -114,9 +115,10 @@ public final class AllPacksFrame extends javax.swing.JFrame {
 
     public void search(String str) {
         model = (DefaultTableModel) AllPacksTable.getModel();
-        TableRowSorter<DefaultTableModel> trs = new TableRowSorter<>(model);
-        AllPacksTable.setRowSorter(trs);
-        trs.setRowFilter(RowFilter.regexFilter(str));
+        TableRowSorter<DefaultTableModel> tableModelTableRowSorter = new TableRowSorter<>(model);
+
+        AllPacksTable.setRowSorter(tableModelTableRowSorter);
+        tableModelTableRowSorter.setRowFilter(RowFilter.regexFilter(str));
     }
 
     @SuppressWarnings("unchecked")
@@ -360,15 +362,16 @@ public final class AllPacksFrame extends javax.swing.JFrame {
 
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
-
             int row = AllPacksTable.getSelectedRow();
             String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
-            String query1 = "DELETE FROM OPAKOVKI where IDopakovka='" + value + "'";
-            prs = conn.prepareStatement(query1);
-            prs.executeUpdate();
+
+            query = "DELETE FROM OPAKOVKI where IDopakovka='" + value + "'";
+
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.executeUpdate();
             model = (DefaultTableModel) AllPacksTable.getModel();
             model.setRowCount(0);
+            
             show_id();
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
         } catch (HeadlessException | ClassNotFoundException | SQLException e) {
@@ -404,16 +407,15 @@ public final class AllPacksFrame extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
             try {
                 Class.forName("org.h2.Driver");
-                conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
-
                 int row = AllPacksTable.getSelectedRow();
                 String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
 
                 query = "DELETE FROM OPAKOVKI where IDopakovka='" + value + "'";
-                PreparedStatement pst = conn.prepareStatement(query);
-                pst.executeUpdate();
+                preparedStatement = connection.prepareStatement(query);
+                preparedStatement.executeUpdate();
                 model = (DefaultTableModel) AllPacksTable.getModel();
                 model.setRowCount(0);
+
                 show_id();
                 refreshInfo();
                 JOptionPane.showMessageDialog(null, "Изтрихте " + value);

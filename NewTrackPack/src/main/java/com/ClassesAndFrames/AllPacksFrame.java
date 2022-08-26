@@ -371,7 +371,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
             preparedStatement.executeUpdate();
             model = (DefaultTableModel) AllPacksTable.getModel();
             model.setRowCount(0);
-            
+
             show_id();
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
         } catch (HeadlessException | ClassNotFoundException | SQLException e) {

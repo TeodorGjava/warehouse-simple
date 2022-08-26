@@ -33,21 +33,17 @@ public final class MainFrame extends javax.swing.JFrame {
     private PreparedStatement preparedStatement;
 
 
-    public void insertProblemId() {
-        try {
-            Class.forName("org.h2.Driver");
-            try (Connection conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test")) {
-                query = "insert into new values(?,?,?)";
-                preparedStatement = conn.prepareStatement(query);
-                preparedStatement.setString(1, Id.getText());
-                preparedStatement.setString(2, "");
-                preparedStatement.setString(3, date.getText());
-                preparedStatement.executeUpdate();
+    public void insertProblemId() throws ClassNotFoundException, SQLException {
 
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-            System.out.println(e);
-        }
+        Class.forName("org.h2.Driver");
+        query = "insert into new values(?,?,?)";
+
+        preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, Id.getText());
+        preparedStatement.setString(2, "");
+        preparedStatement.setString(3, date.getText());
+
+        preparedStatement.executeUpdate();
     }
 
     public void currentDate() {
@@ -61,8 +57,6 @@ public final class MainFrame extends javax.swing.JFrame {
 
         initComponents();
         currentDate();
-
-
     }
 
     public void add() throws SQLException, ClassNotFoundException, IOException {

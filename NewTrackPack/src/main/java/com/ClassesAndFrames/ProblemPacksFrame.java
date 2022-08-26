@@ -6,7 +6,6 @@ package com.ClassesAndFrames;
 
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,13 +22,10 @@ import javax.swing.table.TableRowSorter;
  * @author LL
  */
 public final class ProblemPacksFrame extends javax.swing.JFrame {
-    DefaultTableModel model;
-    Connection conn;
-    PreparedStatement prs;
-    ResultSet rs;
-    String id;
-    String query;
-    String newID;
+    private DefaultTableModel model;
+    private final Connection connection = new DataBaseConnector().getConnection();
+    private PreparedStatement preparedStatement;
+    private String query;
 
     /**
      * Creates new form ProblemPacksFrame
@@ -56,37 +52,36 @@ public final class ProblemPacksFrame extends javax.swing.JFrame {
     public void insertProblem() throws SQLException, ClassNotFoundException {
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             model = (DefaultTableModel) problemTable.getModel();
             int row = problemTable.getSelectedRow();
-            id = (problemTable.getModel().getValueAt(row, 0).toString());
-            newID = (problemTable.getModel().getValueAt(row, 1).toString());
+            String id = (problemTable.getModel().getValueAt(row, 0).toString());
+            String newID = (problemTable.getModel().getValueAt(row, 1).toString());
+
             query = "update new set newID=?, datestamp = ? WHERE oldID='" + id + "'";
-            prs = conn.prepareStatement(query);
-            prs.setString(1, newID);
-            prs.setString(2, date1.getText());
-            prs.executeUpdate();
-            conn.close();
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, newID);
+            preparedStatement.setString(2, date1.getText());
+
+            preparedStatement.executeUpdate();
+            connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println(e);
         } catch (ArrayIndexOutOfBoundsException ex) {
             JOptionPane.showMessageDialog(null, "Запишете нов номер!");
         }
-
-
     }
 
     public List<ProblemPacksClass> problems() {
         List<ProblemPacksClass> list = new ArrayList();
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
             query = "SELECT * from new";
-            Statement stm = conn.createStatement();
-            rs = stm.executeQuery(query);
-            ProblemPacksClass problemPacks = null;
-            while (rs.next()) {
-                problemPacks = new ProblemPacksClass(rs.getString("oldID"), rs.getString("newID"), rs.getString("datestamp"));
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            ProblemPacksClass problemPacks;
+            while (resultSet.next()) {
+                problemPacks = new ProblemPacksClass(resultSet.getString("oldID"), resultSet.getString("newID"), resultSet.getString("datestamp"));
                 list.add(problemPacks);
             }
         } catch (ClassNotFoundException | SQLException e) {
@@ -98,6 +93,7 @@ public final class ProblemPacksFrame extends javax.swing.JFrame {
     public void show_table() throws SQLException, ClassNotFoundException {
         List<ProblemPacksClass> list1 = problems();
         model = (DefaultTableModel) problemTable.getModel();
+
         Object[] rows = new Object[3];
         for (ProblemPacksClass problemPacksClass : list1) {
             rows[0] = problemPacksClass.getIDopakovka();
@@ -111,10 +107,10 @@ public final class ProblemPacksFrame extends javax.swing.JFrame {
     public void search(String str) {
         model = (DefaultTableModel) problemTable.getModel();
         TableRowSorter<DefaultTableModel> trs = new TableRowSorter<>(model);
+
         problemTable.setRowSorter(trs);
         trs.setRowFilter(RowFilter.regexFilter(str));
     }
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -122,7 +118,7 @@ public final class ProblemPacksFrame extends javax.swing.JFrame {
 
         javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        searchh = new javax.swing.JTextField();
+        search = new javax.swing.JTextField();
         date1 = new javax.swing.JLabel();
         javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
         javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
@@ -140,13 +136,13 @@ public final class ProblemPacksFrame extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(204, 255, 204));
         jLabel2.setText("Търсене:");
 
-        searchh.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        searchh.addActionListener(new java.awt.event.ActionListener() {
+        search.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchhActionPerformed(evt);
             }
         });
-        searchh.addKeyListener(new java.awt.event.KeyAdapter() {
+        search.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 searchhKeyReleased(evt);
             }
@@ -166,7 +162,7 @@ public final class ProblemPacksFrame extends javax.swing.JFrame {
                                 .addGap(251, 251, 251)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(37, 37, 37))
         );
         jPanel1Layout.setVerticalGroup(
@@ -177,7 +173,7 @@ public final class ProblemPacksFrame extends javax.swing.JFrame {
                                         .addComponent(date1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                 .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
-                                                .addComponent(searchh, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(10, 10, 10))
         );
 
@@ -296,7 +292,7 @@ public final class ProblemPacksFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_searchhActionPerformed
 
     private void searchhKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchhKeyReleased
-        String searchTxt = searchh.getText();
+        String searchTxt = search.getText();
         search(searchTxt);
     }//GEN-LAST:event_searchhKeyReleased
 
@@ -339,15 +335,16 @@ public final class ProblemPacksFrame extends javax.swing.JFrame {
 
         try {
             Class.forName("org.h2.Driver");
-            conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
 
             int row = problemTable.getSelectedRow();
             String value = (problemTable.getModel().getValueAt(row, 0).toString());
-            String query1 = "DELETE FROM new where OLDID='" + value + "'";
-            PreparedStatement pst = conn.prepareStatement(query1);
-            pst.executeUpdate();
+            query = "DELETE FROM new where OLDID='" + value + "'";
+
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.executeUpdate();
             model = (DefaultTableModel) problemTable.getModel();
             model.setRowCount(0);
+
             show_table();
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
         } catch (ArrayIndexOutOfBoundsException ex) {
@@ -365,6 +362,6 @@ public final class ProblemPacksFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel date1;
     private javax.swing.JTable problemTable;
-    private javax.swing.JTextField searchh;
+    private javax.swing.JTextField search;
     // End of variables declaration//GEN-END:variables
 }

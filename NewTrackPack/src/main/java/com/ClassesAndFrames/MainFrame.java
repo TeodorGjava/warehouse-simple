@@ -6,7 +6,6 @@ package com.ClassesAndFrames;
 
 
 import java.awt.event.KeyEvent;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,11 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 
@@ -27,16 +23,15 @@ import javax.swing.JOptionPane;
  */
 public final class MainFrame extends javax.swing.JFrame {
 
-    String id;
-    String status;
-    AllPacksFrame all = new AllPacksFrame();
-    ProblemPacksFrame problems;
-    String query;
-    CommentsFrame commentsFrame = new CommentsFrame();
-    ClientsFrame clientFrame = new ClientsFrame();
-    Connection conn;
-    PreparedStatement preparedStatement;
-    Statement statement;
+    private String status;
+    private final AllPacksFrame all = new AllPacksFrame();
+    private final ProblemPacksFrame problems;
+    private String query;
+    private final CommentsFrame commentsFrame = new CommentsFrame();
+    private final ClientsFrame clientFrame = new ClientsFrame();
+    private final Connection connection = new DataBaseConnector().getConnection();
+    private PreparedStatement preparedStatement;
+
 
     public void insertProblemId() {
         try {
@@ -63,6 +58,7 @@ public final class MainFrame extends javax.swing.JFrame {
 
     public MainFrame() throws SQLException, ClassNotFoundException {
         this.problems = new ProblemPacksFrame();
+
         initComponents();
         currentDate();
 
@@ -70,22 +66,23 @@ public final class MainFrame extends javax.swing.JFrame {
     }
 
     public void add() throws SQLException, ClassNotFoundException, IOException {
-        id = Id.getText();
+        String id = Id.getText();
         Class.forName("org.h2.Driver");
-        conn = DriverManager.getConnection("jdbc:h2:./DB/db;IFEXISTS=TRUE", "test", "test");
+        Statement statement;
+        ResultSet resultSet;
         if (oldDate.getText().equals("")) {
             String checkID = "SELECT * FROM OPAKOVKI\n" +
                     "WHERE OPAKOVKI.IDopakovka ='" + id + "'";
-            statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(checkID);
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(checkID);
             StringBuilder packID = new StringBuilder();
-            while (rs.next()) {
-                String ProblemID = rs.getString("IDopakovka");
+            while (resultSet.next()) {
+                String ProblemID = resultSet.getString("IDopakovka");
                 packID.append(ProblemID);
             }
             if (!packID.toString().contains(id)) {
                 query = "insert into opakovki values(?,?,?,?,?)";
-                preparedStatement = conn.prepareStatement(query);
+                preparedStatement = connection.prepareStatement(query);
                 if (yes.isSelected()) {
                     status = yes.getText();
                 }
@@ -99,7 +96,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 preparedStatement.setString(5, numWh.getText());
 
                 preparedStatement.executeUpdate();
-                conn.close();
+                connection.close();
                 JOptionPane.showMessageDialog(null, "Добавихте опаковка " + id + "!");
             } else {
                 if (no.isSelected()) {
@@ -109,10 +106,10 @@ public final class MainFrame extends javax.swing.JFrame {
                     status = "Склад";
                 }
                 String checkStatus = "SELECT * FROM OPAKOVKI WHERE OPAKOVKI.Status='" + status + "'AND OPAKOVKI.IDopakovka='" + id + "'";
-                ResultSet showStatusRS = statement.executeQuery(checkStatus);
+                resultSet = statement.executeQuery(checkStatus);
                 StringBuilder tank = new StringBuilder();
-                while (showStatusRS.next()) {
-                    String problemStat = showStatusRS.getString("Status");
+                while (resultSet.next()) {
+                    String problemStat = resultSet.getString("Status");
                     tank.append(problemStat);
                 }
                 if (tank.toString().contains(status)) {
@@ -120,7 +117,7 @@ public final class MainFrame extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Дублирана опаковка " + id + "!");
                 } else {
                     query = "update OPAKOVKI set Status =?, Location = ?, datestamp = ?, numWh = ?where IDopakovka ='" + id + "'";
-                    preparedStatement = conn.prepareStatement(query);
+                    preparedStatement = connection.prepareStatement(query);
                     if (yes.isSelected()) {
                         status = yes.getText();
                     }
@@ -134,14 +131,14 @@ public final class MainFrame extends javax.swing.JFrame {
 
                     preparedStatement.executeUpdate();
 
-                    conn.close();
+                    connection.close();
                     JOptionPane.showMessageDialog(null, "Актуализирахте опаковка " + id + "!");
                 }
             }
         } else {
             String checkID = "SELECT * FROM OPAKOVKI\n" +
                     "WHERE OPAKOVKI.IDopakovka ='" + id + "'";
-            statement = conn.createStatement();
+            statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(checkID);
             StringBuilder packID = new StringBuilder();
             while (rs.next()) {
@@ -150,7 +147,7 @@ public final class MainFrame extends javax.swing.JFrame {
             }
             if (!packID.toString().contains(id)) {
                 query = "insert into opakovki values(?,?,?,?,?)";
-                 preparedStatement = conn.prepareStatement(query);
+                preparedStatement = connection.prepareStatement(query);
                 if (yes.isSelected()) {
                     status = yes.getText();
                 }
@@ -164,7 +161,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 preparedStatement.setString(5, numWh.getText());
 
                 preparedStatement.executeUpdate();
-                conn.close();
+                connection.close();
                 JOptionPane.showMessageDialog(null, "Добавихте опаковка " + id + "!");
             } else {
                 if (no.isSelected()) {
@@ -174,19 +171,19 @@ public final class MainFrame extends javax.swing.JFrame {
                     status = "Склад";
                 }
                 String checkStatus = "SELECT * FROM OPAKOVKI WHERE OPAKOVKI.Status='" + status + "'AND OPAKOVKI.IDopakovka='" + id + "'";
-                ResultSet showStatusRS = statement.executeQuery(checkStatus);
+                resultSet = statement.executeQuery(checkStatus);
                 StringBuilder tank = new StringBuilder();
-                while (showStatusRS.next()) {
-                    String problemStat = showStatusRS.getString("Status");
+                while (resultSet.next()) {
+                    String problemStat = resultSet.getString("Status");
                     tank.append(problemStat);
                 }
                 if (tank.toString().contains(status)) {
                     insertProblemId();
-                    conn.close();
+                    connection.close();
                     JOptionPane.showMessageDialog(null, "Дублиран запис!");
                 } else {
                     query = "update OPAKOVKI set Status =?, Location = ?, datestamp = ?, numWh = ?where IDopakovka ='" + id + "'";
-                     preparedStatement = conn.prepareStatement(query);
+                    preparedStatement = connection.prepareStatement(query);
                     if (yes.isSelected()) {
                         status = yes.getText();
                     }
@@ -200,7 +197,7 @@ public final class MainFrame extends javax.swing.JFrame {
 
                     preparedStatement.executeUpdate();
 
-                    conn.close();
+                    connection.close();
                     if (!Id.getText().equals("")) {
                         JOptionPane.showMessageDialog(null, "Актуализирахте опаковка " + id + "!");
                     } else {

@@ -99,8 +99,8 @@ public final class MainFrame extends javax.swing.JFrame {
                 if (yes.isSelected()) {
                     status = "Склад";
                 }
-                String checkStatus = "SELECT * FROM OPAKOVKI WHERE OPAKOVKI.Status='" + status + "'AND OPAKOVKI.IDopakovka='" + id + "'";
-                resultSet = statement.executeQuery(checkStatus);
+                query = "SELECT * FROM OPAKOVKI WHERE OPAKOVKI.Status='" + status + "'AND OPAKOVKI.IDopakovka='" + id + "'";
+                resultSet = statement.executeQuery(query);
                 StringBuilder tank = new StringBuilder();
                 while (resultSet.next()) {
                     String problemStat = resultSet.getString("Status");
@@ -130,10 +130,10 @@ public final class MainFrame extends javax.swing.JFrame {
                 }
             }
         } else {
-            String checkID = "SELECT * FROM OPAKOVKI\n" +
+            query = "SELECT * FROM OPAKOVKI\n" +
                     "WHERE OPAKOVKI.IDopakovka ='" + id + "'";
             statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(checkID);
+            ResultSet rs = statement.executeQuery(query);
             StringBuilder packID = new StringBuilder();
             while (rs.next()) {
                 String ProblemID = rs.getString("IDopakovka");
@@ -557,9 +557,7 @@ public final class MainFrame extends javax.swing.JFrame {
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
         try {
             add();
-        } catch (SQLException | ClassNotFoundException ex) {
-            System.out.println(ex);
-        } catch (IOException ex) {
+        } catch (SQLException | ClassNotFoundException | IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_addActionPerformed

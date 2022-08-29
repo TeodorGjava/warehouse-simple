@@ -343,8 +343,8 @@ public final class ClientsFrame extends javax.swing.JFrame {
 
         try {
             export.export(clientsTable);
-        } catch (IOException e) {
-            System.out.println(e);
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_saveAsActionPerformed
 
@@ -362,7 +362,7 @@ public final class ClientsFrame extends javax.swing.JFrame {
             show_id();
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
         } catch (HeadlessException | ClassNotFoundException | SQLException e) {
-            System.out.println(e);
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, e);
         } catch (ArrayIndexOutOfBoundsException ex) {
             JOptionPane.showMessageDialog(null, "Няма избрано поле!");
         }

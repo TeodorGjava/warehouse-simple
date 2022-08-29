@@ -1,4 +1,4 @@
-package com.ClassesAndFrames;
+package com.ClassesAndFrames.DatabaseConnectors;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

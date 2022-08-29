@@ -1,4 +1,4 @@
-package com.ClassesAndFrames;
+package com.ClassesAndFrames.common;
 
 import java.util.GregorianCalendar;
 

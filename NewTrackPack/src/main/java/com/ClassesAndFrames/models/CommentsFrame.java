@@ -2,7 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.ClassesAndFrames;
+package com.ClassesAndFrames.models;
+
+import com.ClassesAndFrames.logic.CommentsClass;
+import com.ClassesAndFrames.DatabaseConnectors.DataBaseConnector;
+import com.ClassesAndFrames.common.DateTime;
 
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
@@ -271,16 +275,16 @@ public final class CommentsFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_commentsTableKeyPressed
 
-    public ArrayList<Comments> comments() throws ClassNotFoundException, SQLException {
-        ArrayList<Comments> list = new ArrayList<>();
+    public ArrayList<CommentsClass> comments() throws ClassNotFoundException, SQLException {
+        ArrayList<CommentsClass> list = new ArrayList<>();
 
         Class.forName("org.h2.Driver");
         query = "SELECT * from comments";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
-        Comments comments;
+        CommentsClass comments;
         while (resultSet.next()) {
-            comments = new Comments(resultSet.getString("id"), resultSet.getString("comment"), resultSet.getString("datestamp"));
+            comments = new CommentsClass(resultSet.getString("id"), resultSet.getString("comment"), resultSet.getString("datestamp"));
             list.add(comments);
         }
 
@@ -289,10 +293,10 @@ public final class CommentsFrame extends javax.swing.JFrame {
     }
 
     public void show_comments() throws SQLException, ClassNotFoundException {
-        ArrayList<Comments> list1 = comments();
+        ArrayList<CommentsClass> list1 = comments();
         model = (DefaultTableModel) commentsTable.getModel();
         Object[] rows = new Object[3];
-        for (Comments comments : list1) {
+        for (CommentsClass comments : list1) {
             rows[0] = comments.getIDopakovka();
             rows[1] = comments.getComment();
             rows[2] = comments.getDatestamp();

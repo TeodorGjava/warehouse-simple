@@ -1,4 +1,4 @@
-package com.ClassesAndFrames;
+package com.ClassesAndFrames.DatabaseConnectors;
 
 
 import java.sql.Connection;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public class DataBaseConnector extends H2DatabaseConnector {
 
 
-    protected DataBaseConnector() throws SQLException {
+    public DataBaseConnector() throws SQLException {
         super();
     }
 

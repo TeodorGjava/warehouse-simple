@@ -2,12 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.ClassesAndFrames;
+package com.ClassesAndFrames.models;
+
+import com.ClassesAndFrames.logic.AllPacksClass;
+import com.ClassesAndFrames.DatabaseConnectors.DataBaseConnector;
+import com.ClassesAndFrames.MainFrame;
+import com.ClassesAndFrames.common.DateTime;
+import com.ClassesAndFrames.common.ExportData;
 
 import java.awt.HeadlessException;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,11 +26,8 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-/**
- * @author LL
- */
-public final class ClientsFrame extends javax.swing.JFrame {
 
+public final class AllPacksFrame extends javax.swing.JFrame {
     private DefaultTableModel model;
     private final Connection connection = new DataBaseConnector().getConnection();
     private PreparedStatement preparedStatement;
@@ -34,51 +35,32 @@ public final class ClientsFrame extends javax.swing.JFrame {
     private String query;
     private final ExportData export = new ExportData();
 
-    public void show_count() {
-        int count = opakovki().size();
-        sum.setText(String.valueOf(count));
-    }
-
-    public ClientsFrame() throws SQLException {
+    public AllPacksFrame() throws SQLException {
         initComponents();
-        show_id();
         currentDate();
-        show_count();
-    }
-
-    public void currentDate() {
-        DateTime date = new DateTime();
-        date1.setText(date.getDate());
-    }
-
-    public void refreshInfo() {
-        model = (DefaultTableModel) clientsTable.getModel();
-        model.setRowCount(0);
         show_id();
         show_count();
     }
 
-    public void search(String str) {
-        model = (DefaultTableModel) clientsTable.getModel();
-        TableRowSorter<DefaultTableModel> tableModelTableRowSorter = new TableRowSorter<>(model);
+    public void show_count() {
+        int count = packs().size();
+        sum.setText(String.valueOf(count));
 
-        clientsTable.setRowSorter(tableModelTableRowSorter);
-        tableModelTableRowSorter.setRowFilter(RowFilter.regexFilter(str));
     }
 
-    public ArrayList<Clients> opakovki() {
-        ArrayList<Clients> list = new ArrayList<>();
-        String status = "Клиент";
+    public ArrayList<AllPacksClass> packs() {
+        ArrayList<AllPacksClass> list = new ArrayList<>();
         try {
             Class.forName("org.h2.Driver");
-            query = "SELECT * from OPAKOVKI WHERE STATUS='" + status + "'";
+            query = "SELECT * from OPAKOVKI";
 
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
-            Clients PacksClients;
+
+            AllPacksClass AllPacks;
             while (resultSet.next()) {
-                PacksClients = new Clients(resultSet.getString("IDopakovka"), resultSet.getString("Status"), resultSet.getString("Location"), resultSet.getString("datestamp"), resultSet.getString("numWh"));
-                list.add(PacksClients);
+                AllPacks = new AllPacksClass(resultSet.getString("IDopakovka"), resultSet.getString("Status"), resultSet.getString("Location"), resultSet.getString("datestamp"), resultSet.getString("numWh"));
+                list.add(AllPacks);
             }
         } catch (ClassNotFoundException | SQLException e) {
             JOptionPane.showMessageDialog(null, e);
@@ -87,29 +69,33 @@ public final class ClientsFrame extends javax.swing.JFrame {
     }
 
     public void show_id() {
-        ArrayList<Clients> list1 = opakovki();
-        model = (DefaultTableModel) clientsTable.getModel();
+        ArrayList<AllPacksClass> list1 = packs();
+        model = (DefaultTableModel) AllPacksTable.getModel();
 
         Object[] rows = new Object[5];
-        for (Clients clients : list1) {
-            rows[0] = clients.getNumWh();
-            rows[1] = clients.getIDopakovka();
-            rows[2] = clients.getStatus();
-            rows[3] = clients.getLocation();
-            rows[4] = clients.getDatestamp();
+        for (AllPacksClass allPacksClass : list1) {
+            rows[0] = allPacksClass.getNumWh();
+            rows[1] = allPacksClass.getIDopakovka();
+            rows[2] = allPacksClass.getStatus();
+            rows[3] = allPacksClass.getLocation();
+            rows[4] = allPacksClass.getDatestamp();
             model.addRow(rows);
         }
+    }
+
+    public void currentDate() {
+        DateTime date = new DateTime();
+        date1.setText(date.getDate());
     }
 
     public void comment() throws ClassNotFoundException, SQLException {
         try {
             Class.forName("org.h2.Driver");
-            model = (DefaultTableModel) clientsTable.getModel();
-            int row = clientsTable.getSelectedRow();
+            model = (DefaultTableModel) AllPacksTable.getModel();
+            int row = AllPacksTable.getSelectedRow();
 
-            id = (clientsTable.getModel().getValueAt(row, 1).toString());
-            String comment = (clientsTable.getModel().getValueAt(row, 5).toString());
-
+            id = (AllPacksTable.getModel().getValueAt(row, 1).toString());
+            String comment = (AllPacksTable.getModel().getValueAt(row, 5).toString());
             query = "insert into comments values (?,?,?)";
 
             preparedStatement = connection.prepareStatement(query);
@@ -118,11 +104,26 @@ public final class ClientsFrame extends javax.swing.JFrame {
             preparedStatement.setString(3, date1.getText());
 
             preparedStatement.executeUpdate();
+            String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
+            JOptionPane.showMessageDialog(null, "Добавихте коментар за опаковка " + value + "!");
         } catch (ClassNotFoundException | SQLException e) {
             JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка " + id);
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            JOptionPane.showMessageDialog(null, "Няма избрано поле!");
         }
+    }
+
+    public void refreshInfo() {
+        model = (DefaultTableModel) AllPacksTable.getModel();
+        model.setRowCount(0);
+        show_id();
+        show_count();
+    }
+
+    public void search(String str) {
+        model = (DefaultTableModel) AllPacksTable.getModel();
+        TableRowSorter<DefaultTableModel> tableModelTableRowSorter = new TableRowSorter<>(model);
+
+        AllPacksTable.setRowSorter(tableModelTableRowSorter);
+        tableModelTableRowSorter.setRowFilter(RowFilter.regexFilter(str));
     }
 
     @SuppressWarnings("unchecked")
@@ -135,13 +136,14 @@ public final class ClientsFrame extends javax.swing.JFrame {
         date1 = new javax.swing.JLabel();
         javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
         javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
-        clientsTable = new javax.swing.JTable();
-        javax.swing.JButton coment = new javax.swing.JButton();
-        javax.swing.JButton saveAs = new javax.swing.JButton();
-        javax.swing.JButton delete = new javax.swing.JButton();
-        javax.swing.JButton refreshInfo = new javax.swing.JButton();
-        sum = new javax.swing.JLabel();
+        AllPacksTable = new javax.swing.JTable();
+        javax.swing.JPanel jPanel3 = new javax.swing.JPanel();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
+        sum = new javax.swing.JLabel();
+        javax.swing.JButton refreshInfo = new javax.swing.JButton();
+        javax.swing.JButton delete = new javax.swing.JButton();
+        javax.swing.JButton saveAs = new javax.swing.JButton();
+        javax.swing.JButton coment = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -155,7 +157,7 @@ public final class ClientsFrame extends javax.swing.JFrame {
         });
         search.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                searchhKeyReleased(evt);
+                searchKeyReleased(evt);
             }
         });
 
@@ -194,30 +196,34 @@ public final class ClientsFrame extends javax.swing.JFrame {
 
         jPanel2.setForeground(new java.awt.Color(51, 51, 51));
 
-        clientsTable.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        clientsTable.setModel(new javax.swing.table.DefaultTableModel(
+        AllPacksTable.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        AllPacksTable.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][]{
 
                 },
                 new String[]{
-                        "Складова Разписка", "Опаковка", "Статус", "Местоположение", "Дата на изпращане", "Коментар"
+                        "Складова Разписка", "Опаковка", "Статус", "Местоположение", "Дата", "Коментар"
                 }
         ));
-        jScrollPane1.setViewportView(clientsTable);
-
-        coment.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        coment.setText("Добави Коментар");
-        coment.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comentActionPerformed(evt);
+        AllPacksTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                AllPacksTableKeyPressed(evt);
             }
         });
+        jScrollPane1.setViewportView(AllPacksTable);
 
-        saveAs.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        saveAs.setText(".XLS");
-        saveAs.addActionListener(new java.awt.event.ActionListener() {
+        jLabel1.setFont(new java.awt.Font("Dialog", 2, 14)); // NOI18N
+        jLabel1.setText("Sum:");
+
+        sum.setFont(new java.awt.Font("Dialog", 3, 14)); // NOI18N
+
+        refreshInfo.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        refreshInfo.setText("Обнови");
+        refreshInfo.setIconTextGap(0);
+        refreshInfo.setPreferredSize(new java.awt.Dimension(40, 42));
+        refreshInfo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveAsActionPerformed(evt);
+                refreshInfoActionPerformed(evt);
             }
         });
 
@@ -239,20 +245,57 @@ public final class ClientsFrame extends javax.swing.JFrame {
             }
         });
 
-        refreshInfo.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        refreshInfo.setText("Обнови");
-        refreshInfo.setIconTextGap(0);
-        refreshInfo.setPreferredSize(new java.awt.Dimension(40, 42));
-        refreshInfo.addActionListener(new java.awt.event.ActionListener() {
+        saveAs.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        saveAs.setText(".XLS");
+        saveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshInfoActionPerformed(evt);
+                saveAsActionPerformed(evt);
             }
         });
 
-        sum.setFont(new java.awt.Font("Dialog", 3, 14)); // NOI18N
+        coment.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        coment.setText("Добави Коментар");
+        coment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                commentActionPerformed(evt);
+            }
+        });
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 2, 14)); // NOI18N
-        jLabel1.setText("Sum:");
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+                jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)
+                                .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(sum, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+                jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(sum, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -261,38 +304,17 @@ public final class ClientsFrame extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane1)
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(27, 27, 27)
-                                                .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                                .addGap(0, 0, Short.MAX_VALUE)
-                                                .addComponent(jLabel1)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(sum, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE)
+                                        .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(3, 3, 3)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(sum, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(refreshInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                .addComponent(delete, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(coment, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(saveAs, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -319,32 +341,25 @@ public final class ClientsFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void searchhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchhActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_searchhActionPerformed
-
-    private void searchhKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchhKeyReleased
-        String searchTxt = search.getText();
-        search(searchTxt);
-    }//GEN-LAST:event_searchhKeyReleased
-
-    private void comentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comentActionPerformed
+    private void commentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comentActionPerformed
 
         try {
             comment();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Вече има добавен коментар за опаковка " + id);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            JOptionPane.showMessageDialog(null, "Празно поле!");
         }
     }//GEN-LAST:event_comentActionPerformed
 
     private void saveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsActionPerformed
 
         try {
-            export.export(clientsTable);
-        } catch (IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            export.export(AllPacksTable);
+        } catch (IOException e) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, e);
         }
     }//GEN-LAST:event_saveAsActionPerformed
 
@@ -352,17 +367,20 @@ public final class ClientsFrame extends javax.swing.JFrame {
 
         try {
             Class.forName("org.h2.Driver");
-            int row = clientsTable.getSelectedRow();
-            String value = (clientsTable.getModel().getValueAt(row, 1).toString());
+            int row = AllPacksTable.getSelectedRow();
+            String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
+
             query = "DELETE FROM OPAKOVKI where IDopakovka='" + value + "'";
+
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.executeUpdate();
-            model = (DefaultTableModel) clientsTable.getModel();
+            model = (DefaultTableModel) AllPacksTable.getModel();
             model.setRowCount(0);
+
             show_id();
             JOptionPane.showMessageDialog(null, "Изтрихте " + value);
         } catch (HeadlessException | ClassNotFoundException | SQLException e) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, e);
+            System.out.println(e);
         } catch (ArrayIndexOutOfBoundsException ex) {
             JOptionPane.showMessageDialog(null, "Няма избрано поле!");
         }
@@ -376,9 +394,49 @@ public final class ClientsFrame extends javax.swing.JFrame {
         refreshInfo();        // TODO add your handling code here:
     }//GEN-LAST:event_refreshInfoActionPerformed
 
+    private void searchhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchhActionPerformed
+        // TODO add your handling code here: update sum when search filter is on
+
+    }//GEN-LAST:event_searchhActionPerformed
+
+    private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchhKeyReleased
+        String searchTxt = search.getText();
+        search(searchTxt);
+    }//GEN-LAST:event_searchKeyReleased
+
     private void deleteMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteMouseReleased
         refreshInfo();
     }//GEN-LAST:event_deleteMouseReleased
+
+    private void AllPacksTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_AllPacksTableKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
+            try {
+                Class.forName("org.h2.Driver");
+                int row = AllPacksTable.getSelectedRow();
+                String value = (AllPacksTable.getModel().getValueAt(row, 1).toString());
+
+                query = "DELETE FROM OPAKOVKI where IDopakovka='" + value + "'";
+                preparedStatement = connection.prepareStatement(query);
+                preparedStatement.executeUpdate();
+                model = (DefaultTableModel) AllPacksTable.getModel();
+                model.setRowCount(0);
+
+                show_id();
+                refreshInfo();
+                JOptionPane.showMessageDialog(null, "Изтрихте " + value);
+            } catch (Exception e) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, e);
+            }
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            try {
+                comment();
+            } catch (ClassNotFoundException | SQLException ex) {
+                Logger.getLogger(AllPacksFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            refreshInfo();
+        }
+    }//GEN-LAST:event_AllPacksTableKeyPressed
 
     /**
      * @param args the command line arguments
@@ -386,7 +444,7 @@ public final class ClientsFrame extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable clientsTable;
+    private javax.swing.JTable AllPacksTable;
     private javax.swing.JLabel date1;
     private javax.swing.JTextField search;
     private javax.swing.JLabel sum;

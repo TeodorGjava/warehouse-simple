@@ -1,5 +1,5 @@
 
-package com.ClassesAndFrames;
+package com.ClassesAndFrames.common;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -17,7 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExportData {
-    ExportData() {
+    public ExportData() {
     }
 
     private final JFileChooser fileChooser = new JFileChooser();

@@ -2,7 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.ClassesAndFrames;
+package com.ClassesAndFrames.models;
+
+import com.ClassesAndFrames.DatabaseConnectors.DataBaseConnector;
+import com.ClassesAndFrames.logic.ProblemPacksClass;
+import com.ClassesAndFrames.common.DateTime;
 
 import java.awt.event.KeyEvent;
 import java.sql.Connection;

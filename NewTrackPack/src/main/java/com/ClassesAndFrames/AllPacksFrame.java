@@ -354,7 +354,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
         try {
             export.export(AllPacksTable);
         } catch (IOException e) {
-            System.out.println(e);
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, e);
         }
     }//GEN-LAST:event_saveAsActionPerformed
 
@@ -420,7 +420,7 @@ public final class AllPacksFrame extends javax.swing.JFrame {
                 refreshInfo();
                 JOptionPane.showMessageDialog(null, "Изтрихте " + value);
             } catch (Exception e) {
-                System.out.println(e);
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, e);
             }
         }
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
